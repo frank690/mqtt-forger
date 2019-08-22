@@ -216,5 +216,7 @@ class NoveltyProducer:
         # adjust current state of job accordingly.
         if (self.pipelines[id_]['active'] == 1):
             # TODO: start job
+            pass
         else:
+            pass
             # TODO: stop job
