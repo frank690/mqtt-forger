@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.0.8 (2019-08-27)
+
+* Removed __init__.py from main folder.
+* Removed content from __init__.py from NoveltyProducer folder.
+
 ## 0.0.7 (2019-08-27)
 
 * Added .gitignore file.
