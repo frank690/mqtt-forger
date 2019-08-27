@@ -22,8 +22,7 @@ class TestBaseUnit(TestCase):
         self.assertTrue(issubclass(noise_data_type, (float, np.floating)))
 
         # _get_times
-        times_data_type = type(generator._get_times())
-        self.assertTrue(isinstance(times_data_type, tuple))  
+        self.assertTrue(isinstance(generator._get_times(), tuple))  
 
         # _rescale
         rescale_data_type = type(generator._rescale(clean_data))
@@ -34,8 +33,7 @@ class TestBaseUnit(TestCase):
         self.assertTrue(issubclass(data_type, (float, np.floating)))
         
         # get_payload
-        payload_data_type = type(generator.get_payload())
-        self.assertTrue(isinstance(payload_data_type, string))
+        self.assertTrue(isinstance(generator.get_payload(), string))
 
         # __deepcopy__
         self.assertEqual(generator, copy.deepcopy(generator))
