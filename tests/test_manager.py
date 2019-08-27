@@ -20,15 +20,15 @@ class TestBaseUnit(TestCase):
         self.assertTrue(isinstance(top_id, int)) 
         
         # _add_channel
-        chn_id = man._add_channel(channel_name_='bar', channel_limits_=[-1, 1], channel_frequency_=0.1)
+        chn_id = man._add_channel(name_='bar', limits_=[-1, 1], frequency_=0.1)
         self.assertTrue(isinstance(chn_id, int))
         
         # _add_novelty
-        nov_id = man._add_novelty(novelty_frequency_=0.01, novelty_duration_=1, novelty_impact_=1)
+        nov_id = man._add_novelty(frequency_=0.01, duration_=1, impact_=1)
         self.assertTrue(isinstance(nov_id, int))
         
         # _add_pipeline
-        pipe_id = man._add_pipeline(pipeline_name_='pipe', host_id=con_id, topic_id=top_id, channel_id=chn_id, novelty_id=nov_id)
+        pipe_id = man._add_pipeline(name_='pipe', host_id_=con_id, topic_id_=top_id, channel_id_=chn_id, novelty_id_=nov_id)
         self.assertTrue(isinstance(pipe_id, int))
 
     def test_invalid_inputs(self):

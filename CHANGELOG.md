@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.22 (2019-08-27)
+
+* Bugfix in `test_type_output(...)` in tests/test_manager.py.
+
 ## 0.0.21 (2019-08-27)
 
 * Adding missing import of custom exception classes in tests/test_manager.py.
