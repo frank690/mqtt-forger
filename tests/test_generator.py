@@ -23,7 +23,7 @@ class TestBaseUnit(TestCase):
 
         # _get_times
         times_data_type = type(generator._get_times())
-        self.assertTrue(isinstance(payload_data_type, tuple))  
+        self.assertTrue(isinstance(times_data_type, tuple))  
 
         # _rescale
         rescale_data_type = type(generator._rescale(clean_data))
@@ -64,7 +64,7 @@ class TestBaseUnit(TestCase):
         # _get_noise
         noise_data_value = generator._get_noise(times)
         self.assertTrue(noise_data_value <= generator.novelty_impact)
-        self.assertTrue(noise_data_value >= generator.novelty_impact)
+        self.assertTrue(noise_data_value >= -generator.novelty_impact)
         
         # replant the seed
         generator._plant_a_seed()
