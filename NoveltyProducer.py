@@ -218,5 +218,5 @@ class NoveltyProducer:
             # TODO: start job
             pass
         else:
-            pass
             # TODO: stop job
+            pass
