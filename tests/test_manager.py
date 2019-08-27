@@ -39,7 +39,7 @@ class TestBaseUnit(TestCase):
         
         # ip_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = man.create_pipeline(ip_=127.0.0.1, port_=1883, topic_='foo', frequency_=1, channel_name_='bar')
+            invalid_generator = man.create_pipeline(ip_=127001, port_=1883, topic_='foo', frequency_=1, channel_name_='bar')
         
         # port_
         with self.assertRaises(InvalidInputTypeError):
