@@ -10,8 +10,8 @@ Additionally a random noise can be chosen in frequency, duration and impact to i
 from NoveltyProducer.Manager import Manager
 
 # init instance
-nov = Manager()
+man = Manager()
 
 # create new pipeline that will send data to host onto topic 'foo' with data columns 'bar'. Do this with 15 Hz.
-nov.create_pipeline('1.234.567.89', 1883, 'foo', 15, 'bar')
+man.create_pipeline('localhost', 1883, 'foo', 15, 'bar')
 ~~~
