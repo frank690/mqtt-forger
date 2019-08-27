@@ -34,12 +34,6 @@ class TestBaseUnit(TestCase):
         
         # get_payload
         self.assertTrue(isinstance(generator.get_payload(), str))
-
-        # __deepcopy__
-        self.assertEqual(generator, copy.deepcopy(generator))
-
-        # __copy__
-        self.assertEqual(generator, copy.copy(generator))
         
     def test_value_output(self):
         """Test delivered output of each function of generator class."""
