@@ -1,6 +1,6 @@
 import copy
 from unittest import TestCase
-from NoveltyProducer.Generator import Generator
+from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
 
 class TestBaseUnit(TestCase):
     """Tests for generator.py module."""

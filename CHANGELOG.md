@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.9 (2019-08-27)
+
+* Bugfix in test/test_generator.py.
+
 ## 0.0.8 (2019-08-27)
 
 * Removed __init__.py from main folder.
