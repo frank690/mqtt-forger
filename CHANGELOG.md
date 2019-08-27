@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.17 (2019-08-27)
+
+* Added `apscheduler` to test-requirements.txt.
+
 ## 0.0.16 (2019-08-27)
 
 * Added tests/test_manager.py.
