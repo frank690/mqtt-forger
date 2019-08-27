@@ -33,7 +33,7 @@ class TestBaseUnit(TestCase):
         self.assertTrue(issubclass(data_type, (float, np.floating)))
         
         # get_payload
-        self.assertTrue(isinstance(generator.get_payload(), string))
+        self.assertTrue(isinstance(generator.get_payload(), str))
 
         # __deepcopy__
         self.assertEqual(generator, copy.deepcopy(generator))
