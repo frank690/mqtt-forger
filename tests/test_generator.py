@@ -1,6 +1,6 @@
 import copy
 from unittest import TestCase
-from NoveltyProducer import Generator
+from NoveltyProducer.Generator import Generator
 
 class TestBaseUnit(TestCase):
     """Tests for generator.py module."""

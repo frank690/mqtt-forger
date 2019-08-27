@@ -1,19 +1,24 @@
 # NoveltyProducer - Changelog
 
-## 0.0.5 (2018-08-27)
+## 0.0.6 (2019-08-27)
+
+* Renamed NoveltyProducer.py to Manager.py.
+* Bugfix in test/test_generator.py.
+
+## 0.0.5 (2019-08-27)
 
 * Added .gitignore file.
 * Moved Generator.py and NoveltyProducer.py in NoveltyProducer subfolder.
 
-## 0.0.4 (2018-08-27)
+## 0.0.4 (2019-08-27)
 
  * Bugfix in test/test_generator.py.
 
-## 0.0.3 (2018-08-27)
+## 0.0.3 (2019-08-27)
 
 * Bugfix in .travis.yml.
 
-## 0.0.2 (2018-08-27)
+## 0.0.2 (2019-08-27)
 
 * Added .travis.yml, tests/test_generator.py, test-requirements.txt and setup.py.
 * Major changes in Generator.py:
