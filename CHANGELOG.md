@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.0.7 (2019-08-27)
+
+* Added .gitignore file.
+* Added __init__.py in NoveltyProducer.
+
 ## 0.0.6 (2019-08-27)
 
 * Renamed NoveltyProducer.py to Manager.py.
@@ -7,7 +12,6 @@
 
 ## 0.0.5 (2019-08-27)
 
-* Added .gitignore file.
 * Moved Generator.py and NoveltyProducer.py in NoveltyProducer subfolder.
 
 ## 0.0.4 (2019-08-27)
