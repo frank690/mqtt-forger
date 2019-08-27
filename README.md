@@ -12,6 +12,7 @@ from NoveltyProducer.Manager import Manager
 # init instance
 man = Manager()
 
-# create new pipeline that will send data to host onto topic 'foo' with data columns 'bar'. Do this with 15 Hz.
+# create new pipeline that will send data to host onto topic 'foo' with data columns 'bar'. 
+# Do this with 15 Hz.
 man.create_pipeline('localhost', 1883, 'foo', 15, 'bar')
 ~~~
