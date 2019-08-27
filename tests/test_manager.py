@@ -1,7 +1,7 @@
 import copy
 import numpy as np
 from unittest import TestCase
-from NoveltyProducer.Manager import Manager
+from NoveltyProducer.Manager import Manager, InvalidInputTypeError, InvalidInputValueError
 
 class TestBaseUnit(TestCase):
 
