@@ -4,7 +4,7 @@ from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
 import paho.mqtt.client as mqtt
 
-class NoveltyProducer:
+class Manager:
     """
     Class to connect to a given host and send data with a given frequency.
     This data may include regulary appearing novelties.

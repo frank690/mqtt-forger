@@ -1,5 +1,11 @@
 # NoveltyProducer - Changelog
 
+## 0.0.16 (2019-08-27)
+
+* Added tests/test_manager.py.
+* Added further testing in tests/test_generator.py.
+* Renamed main class in NoveltyProducer/Manager.py from NoveltyProducer to Manager.
+
 ## 0.0.15 (2019-08-27)
 
 * Removed copy and deepcopy comparsion in `test_type_output(...)` in tests/test_generator.py.

@@ -1,4 +1,3 @@
-import copy
 import numpy as np
 from unittest import TestCase
 from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
@@ -57,6 +56,8 @@ class TestBaseUnit(TestCase):
         noise_data_value = generator._get_noise(times)
         self.assertTrue(noise_data_value <= generator.novelty_impact)
         self.assertTrue(noise_data_value >= -generator.novelty_impact)
+        self.assertTrue(generator._get_noise() <= generator.novelty_impact)
+        self.assertTrue(generator._get_noise() >= -generator.novelty_impact)
         
         # replant the seed
         generator._plant_a_seed()
@@ -64,6 +65,9 @@ class TestBaseUnit(TestCase):
         # get_data
         data_value = generator.get_data(times)
         self.assertTrue(data_value == clean_data_value + noise_data_value)
+        
+        # _plant_a_seed
+        generator._plant_a_seed(123)
         
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
@@ -102,3 +106,6 @@ class TestBaseUnit(TestCase):
         # seed_
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, 2, 3, 'InvalidSeed')
+        with self.assertRaises(SeedReplantError):
+            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, 2, 3)
+            invalid_generator._plant_a_seed()
