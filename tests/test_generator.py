@@ -3,14 +3,14 @@ from unittest import TestCase
 from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
 
 class TestBaseUnit(TestCase):
-    """Tests for generator.py module."""
-    # init class
-    seed = 42
-    generator = Generator('Test', [-15, 15], 1, 1, 1, 3, seed)
 
     def test_type_output(self):
         """Test types of output"""
-
+        
+        # init class
+        seed = 42
+        generator = Generator('Test', [-15, 15], 1, 1, 1, 3, seed)
+    
         # _get_clean_data
         clean_data = generator._get_clean_data()
         clean_data_type = type(clean_data)
@@ -44,6 +44,10 @@ class TestBaseUnit(TestCase):
         
     def test_value_output(self):
         """Test delivered output of each function of generator class."""
+        
+        # init class
+        seed = 42
+        generator = Generator('Test', [-15, 15], 1, 1, 1, 3, seed)
         
         # replant the seed
         generator._plant_a_seed()
