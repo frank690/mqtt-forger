@@ -4,6 +4,14 @@ from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
 import paho.mqtt.client as mqtt
 
+class InvalidInputTypeError(Exception):
+    """The InvalidInputTypeError is raised whenever a specific input of a specific function has an invalid/unexpected type."""
+    pass
+
+class InvalidInputValueError(Exception):
+    """The InvalidInputValueError is raised whenever a specific input of a specific function has an invalid/unexpected value."""
+    pass
+    
 class Manager:
     """
     Class to connect to a given host and send data with a given frequency.
@@ -42,6 +50,9 @@ class Manager:
         novelty_impact_ (optional, float): Scaling factor of the noise that will be produced during the novelty appearance.
         pipeline_name_ (optional, str): Name that a certain pipeline can later be associated with.
         """
+        # check inputs
+        self._check_pipeline_materials(ip_, port_, topic_, frequency_, channel_name_, channel_limits_, \
+                                       channel_frequency_, novelty_frequency_, novelty_duration_, novelty_impact_, pipeline_name_)
         # add host
         host_id = self._add_connection(ip_, port_)
         # add topic
@@ -220,3 +231,62 @@ class Manager:
         else:
             # TODO: stop job
             pass
+
+    def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, \
+                                  channel_frequency_, novelty_frequency_, novelty_duration_, novelty_impact_, pipeline_name_):
+        """Check all inputs that are used to create a pipeline"""
+        # ip_
+        if not isinstance(ip_, str):
+            raise InvalidInputTypeError("Content of ip_ is type %s but should be a of type string." % type(ip_))
+            
+        # port_
+        if not isinstance(port_, int):
+            raise InvalidInputTypeError("Content of port_ is type %s but should be a of type int." % type(port_))
+        if ((port_ < 0) | (port_ > 65535)):
+            raise InvalidInputValueError("Value of port_ (%s) is not in valid port range (0 - 65535)." % str(port_))
+
+        # topic_
+        if not isinstance(topic_, str):
+            raise InvalidInputTypeError("Content of topic_ is type %s but should be a of type string." % type(topic_))
+            
+        # frequency_
+        if not isinstance(frequency_, (int, float)):
+            raise InvalidInputTypeError("Content of frequency_ is type %s but should be a of type int or float." % type(frequency_))
+        if frequency_ <= 0:
+            raise InvalidInputValueError("Value of frequency_ (%s [Hz]) is negative or zero but should be positive." % str(frequency_))
+            
+        # channel_name_
+        if not isinstance(channel_name_, str):
+            raise InvalidInputTypeError("Content of channel_name_ is type %s but should be a of type string." % type(channel_name_))
+            
+        # channel_limits_
+        if not isinstance(channel_limits_, list):
+            raise InvalidInputTypeError("Content of channel_limits_ is type %s but should be a of type list." % type(channel_limits_))
+        if not all(isinstance(x, (int, float)) for x in channel_limits_):
+            raise InvalidInputValueError("Not all values of channel_limits_ are of type int or float.")
+            
+        # channel_frequency_
+        if not isinstance(channel_frequency_, (int, float)):
+            raise InvalidInputTypeError("Content of channel_frequency_ is type %s but should be a of type int or float." % type(channel_frequency_))
+        if channel_frequency_ <= 0:
+            raise InvalidInputValueError("Value of channel_frequency_ (%s [Hz]) is negative or zero but should be positive." % str(channel_frequency_))
+            
+        # novelty_frequency_
+        if not isinstance(novelty_frequency_, (int, float)):
+            raise InvalidInputTypeError("Content of novelty_frequency_ is type %s but should be a of type int or float." % type(novelty_frequency_))
+        if novelty_frequency_ <= 0:
+            raise InvalidInputValueError("Value of novelty_frequency_ (%s [Hz]) is negative or zero but should be positive." % str(novelty_frequency_))
+            
+        # novelty_duration_
+        if not isinstance(novelty_duration_, (int, float)):
+            raise InvalidInputTypeError("Content of novelty_duration_ is type %s but should be a of type int or float." % type(novelty_duration_))
+        if novelty_duration_ < 0:
+            raise InvalidInputValueError("Value of novelty_duration_ (%s [s]) is negative but should be positive." % str(novelty_duration_))
+            
+        # novelty_impact_
+        if not isinstance(novelty_impact_, (int, float)):
+            raise InvalidInputTypeError("Content of novelty_impact_ is type %s but should be a of type int or float." % type(novelty_impact_))
+            
+        # pipeline_name_
+        if not isinstance(pipeline_name_, str):
+            raise InvalidInputTypeError("Content of pipeline_name_ is type %s but should be a of type string." % type(pipeline_name_))

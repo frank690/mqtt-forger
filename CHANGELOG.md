@@ -1,5 +1,13 @@
 # NoveltyProducer - Changelog
 
+## 0.0.19 (2019-08-27)
+
+* Expanded tests/test_manager.py.
+* Modified NoveltyProducer/Manager.py.
+    - Added `InvalidInputTypeError(Exception)` and `InvalidInputValueError(Exception)` as exception classes.
+    - Added `_check_pipeline_materials(...)`.
+        - Modified `create_pipeline(...)` accordingly.
+        
 ## 0.0.18 (2019-08-27)
 
 * Added `paho-mqtt` to test-requirements.txt.
