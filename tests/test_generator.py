@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 from unittest import TestCase
 from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
 
@@ -14,11 +15,11 @@ class TestBaseUnit(TestCase):
         # _get_clean_data
         clean_data = generator._get_clean_data()
         clean_data_type = type(clean_data)
-        self.assertTrue(isinstance(clean_data_type, float))
+        self.assertTrue(issubclass(clean_data_type, (float, np.floating)))
 
         # _get_noise
         noise_data_type = type(generator._get_clean_data())
-        self.assertTrue(isinstance(noise_data_type, float))
+        self.assertTrue(issubclass(noise_data_type, (float, np.floating)))
 
         # _get_times
         times_data_type = type(generator._get_times())
@@ -26,11 +27,11 @@ class TestBaseUnit(TestCase):
 
         # _rescale
         rescale_data_type = type(generator._rescale(clean_data))
-        self.assertTrue(isinstance(rescale_data_type, float))
+        self.assertTrue(issubclass(rescale_data_type, (float, np.floating)))
 
         # get_data
         data_type = type(generator.get_data())
-        self.assertTrue(isinstance(data_type, float))
+        self.assertTrue(issubclass(data_type, (float, np.floating)))
         
         # get_payload
         payload_data_type = type(generator.get_payload())
@@ -62,8 +63,8 @@ class TestBaseUnit(TestCase):
         
         # _get_noise
         noise_data_value = generator._get_noise(times)
-        self.assertTrue(noise_data_value <= max(generator.novelty_impact))
-        self.assertTrue(noise_data_value >= min(generator.novelty_impact))
+        self.assertTrue(noise_data_value <= generator.novelty_impact)
+        self.assertTrue(noise_data_value >= generator.novelty_impact)
         
         # replant the seed
         generator._plant_a_seed()

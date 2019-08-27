@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.11 (2019-08-27)
+
+* You know how we do. Bugfix in test/test_generator.py.
+
 ## 0.0.10 (2019-08-27)
 
 * Yet another bugfix in test/test_generator.py.
