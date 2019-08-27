@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from Generator import Generator
+from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
 import paho.mqtt.client as mqtt
 

@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.0.5 (2018-08-27)
+
+* Added .gitignore file.
+* Moved Generator.py and NoveltyProducer.py in NoveltyProducer subfolder.
+
 ## 0.0.4 (2018-08-27)
 
  * Bugfix in test/test_generator.py.
