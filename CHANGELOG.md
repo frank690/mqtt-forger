@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.28 (2019-08-28)
+
+* Renamed docs/README.rst to docs/index.rst.
+
 ## 0.0.27 (2019-08-28)
 
 * Introduced documentation.
