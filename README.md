@@ -12,7 +12,9 @@ from NoveltyProducer.Manager import Manager
 # init instance
 man = Manager()
 
-# create new pipeline that will send data to host onto topic 'foo' with data columns 'bar'. 
+# create new pipeline that will send data to hosts ('test.mosquitto.org') port (1883).
+# Data is published on topic ('foo') with a timestamp and an specific extra column.
+# This column ('bar') holds the generated value.
 # Do this with 15 Hz.
-man.create_pipeline('localhost', 1883, 'foo', 15, 'bar')
+man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15, 'bar')
 ~~~
