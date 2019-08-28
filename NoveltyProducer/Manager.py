@@ -34,7 +34,7 @@ class Manager:
 
     def create_pipeline(self, ip_, port_, topic_, frequency_, channel_name_, \
         channel_limits_=[-1, 1], channel_frequency_=0.1, novelty_frequency_=0.0167, \
-        novelty_duration_=5, novelty_impact_=1, pipeline_name_=None):
+        novelty_duration_=5, novelty_impact_=1, pipeline_name_='Pipe'):
         """Create pipeline and add each element to its dict. Start pipeline afterwards.
 
         Parameters:
@@ -66,7 +66,7 @@ class Manager:
         # init and assign generator for each new pipeline
         self._add_handlers(pipeline_id)
         # add new job in scheduler
-        self.Scheduler.add_job(func=self.publish_data, trigger='interval', seconds=(1/frequency_), kwargs={'id_':pipeline_id})
+        self.Scheduler.add_job(func=self.publish_data, trigger='interval', seconds=(1/frequency_), id=str(pipeline_id), kwargs={'id_':pipeline_id})
 
     def publish_data(self, id_):
         """Get data and publish it to target host.

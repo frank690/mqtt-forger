@@ -1,5 +1,13 @@
 # NoveltyProducer - Changelog
 
+## 0.0.23 (2019-08-28)
+
+* Added TODO.md.
+* Expanded tests/test_manager.py.
+* Minor modifications in NoveltyProducer/Manager.py.
+    - Now default pipeline name is 'Pipe'.
+    - Pipeline id is now passed as job id in scheduler.
+    
 ## 0.0.22 (2019-08-27)
 
 * Bugfix in `test_type_output(...)` in tests/test_manager.py.
