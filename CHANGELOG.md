@@ -1,5 +1,11 @@
 # NoveltyProducer - Changelog
 
+## 0.0.27 (2019-08-28)
+
+* Introduced documentation.
+* Modified TODO.md.
+* Added -yet empty- `add_channel_to_pipeline(...)` and `add_novelty_to_channel(...)` to NoveltyProducer/Manager.py.
+
 ## 0.0.26 (2019-08-28)
 
 * Fixed the bugfix in `test_type_output(...)` in tests/test_manager.py.

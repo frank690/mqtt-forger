@@ -68,6 +68,30 @@ class Manager:
         # add new job in scheduler
         self.Scheduler.add_job(func=self.publish_data, trigger='interval', seconds=(1/frequency_), id=str(pipeline_id), kwargs={'id_':pipeline_id})
 
+    def add_channel_to_pipeline(self, id_, name_, limits_=[-1, 1], frequency_=0.1):
+        """Add another channel to an already existing pipeline.
+        
+        Parameters:
+        id_ (mandatory, int): ID of pipeline.
+        name_ (mandatory, string): Name of channel.
+        limits_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
+        frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
+        """
+        # TODO:
+        pass
+        
+    def add_novelty_to_channel(self, id_, frequency_=0.0167, duration_=5, impact_=1):
+        """Add noise (novelty) to an already existing channel.
+        
+        Parameters:
+        id_ (mandatory, int): ID of channel.
+        frequency_ (optional, string): Name of channel.
+        duration_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
+        impact_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
+        """
+        # TODO:
+        pass
+
     def publish_data(self, id_):
         """Get data and publish it to target host.
 
