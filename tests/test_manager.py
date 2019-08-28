@@ -100,7 +100,7 @@ class TestBaseUnit(TestCase):
         self.assertIsInstance(man.handlers[pipe_id]['mqtt'], mqtt.Client)
         
         # create_pipeline
-        man.create_pipeline(ip_=ip, port_=port, topic_=topic, channel_frequency_=channel_frequency, channel_name_=channel_name, pipeline_name_='sffresch')
+        man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
         pipe_id = str([k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == 'sffresch'][0])
         self.assertIsInstance(man.Scheduler.get_job(pipe_id), Job)
 
