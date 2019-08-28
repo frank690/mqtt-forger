@@ -6,8 +6,8 @@ from NoveltyProducer.Manager import Manager, InvalidInputTypeError, InvalidInput
 from NoveltyProducer.Generator import Generator
 from apscheduler.job import Job
 
-# ext_ip = 'test.mosquitto.org'
-ip = 'localhost' 
+ip = 'test.mosquitto.org'
+# ip = 'localhost' 
 port = 1883
 topic = 'foo'
 frequency = 1
@@ -29,34 +29,34 @@ class TestBaseUnit(TestCase):
         
         # _add_connection
         con_id = man._add_connection(ip_=ip, port_=port)
-        self.assertIn(ip, man.connections[con_id]['ip'])
-        self.assertIn(port, man.connections[con_id]['port'])
+        self.assertEqual(ip, man.connections[con_id]['ip'])
+        self.assertEqual(port, man.connections[con_id]['port'])
         
         # _add_topic
         top_id = man._add_topic(topic_=topic, frequency_=frequency)
-        self.assertIn(topic, man.topics[top_id]['topic'])
-        self.assertIn(frequency, man.topics[top_id]['frequency'])
+        self.assertEqual(topic, man.topics[top_id]['topic'])
+        self.assertEqual(frequency, man.topics[top_id]['frequency'])
         
         # _add_channel
         chn_id = man._add_channel(name_=channel_name, limits_=channel_limits, frequency_=channel_frequency)
-        self.assertIn(channel_name, man.channels[chn_id]['name'])
-        self.assertIn(channel_limits, man.channels[chn_id]['limits'])
-        self.assertIn(channel_frequency, man.channels[chn_id]['frequency'])
+        self.assertEqual(channel_name, man.channels[chn_id]['name'])
+        self.assertEqual(channel_limits, man.channels[chn_id]['limits'])
+        self.assertEqual(channel_frequency, man.channels[chn_id]['frequency'])
         
         # _add_novelty
         nov_id = man._add_novelty(frequency_=novelty_frequency, duration_=novelty_duration, impact_=novelty_impact)
-        self.assertIn(novelty_frequency, man.novelties[nov_id]['frequency'])
-        self.assertIn(novelty_duration, man.novelties[nov_id]['duration'])
-        self.assertIn(novelty_impact, man.novelties[nov_id]['impact'])
+        self.assertEqual(novelty_frequency, man.novelties[nov_id]['frequency'])
+        self.assertEqual(novelty_duration, man.novelties[nov_id]['duration'])
+        self.assertEqual(novelty_impact, man.novelties[nov_id]['impact'])
         
         # _add_pipeline
         pipe_id = man._add_pipeline(name_=pipeline_name, host_id_=con_id, topic_id_=top_id, channel_id_=chn_id, novelty_id_=nov_id)
-        self.assertIn(pipeline_name, man.pipelines[pipe_id]['name'])
-        self.assertIn(con_id, man.pipelines[pipe_id]['host_id'])
-        self.assertIn(top_id, man.pipelines[pipe_id]['topic_id'])
-        self.assertIn(chn_id, man.pipelines[pipe_id]['channel_id'])
-        self.assertIn(nov_id, man.pipelines[pipe_id]['novelty_id'])
-        self.assertIn(1, man.pipelines[pipe_id]['active'])
+        self.assertEqual(pipeline_name, man.pipelines[pipe_id]['name'])
+        self.assertEqual(con_id, man.pipelines[pipe_id]['host_id'])
+        self.assertEqual(top_id, man.pipelines[pipe_id]['topic_id'])
+        self.assertEqual(chn_id, man.pipelines[pipe_id]['channel_id'])
+        self.assertEqual(nov_id, man.pipelines[pipe_id]['novelty_id'])
+        self.assertEqual(1, man.pipelines[pipe_id]['active'])
         
         # switch_pipeline (on to off)
         pipeline_status = man.pipelines[pipe_id]['active']

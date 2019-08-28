@@ -1,5 +1,11 @@
 # NoveltyProducer - Changelog
 
+## 0.0.24 (2019-08-28)
+
+* Minor modifications in tests/test_manager.py:
+    - changed from localhost to external mqtt broker.
+    - bugfix in `test_value_output(...)`.
+
 ## 0.0.23 (2019-08-28)
 
 * Added TODO.md.
