@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.33 (2019-08-29)
+
+* Bugfix in tests/test_manager.py.
+
 ## 0.0.32 (2019-08-29)
 
 * Bugfix in tests/test_manager.py.
