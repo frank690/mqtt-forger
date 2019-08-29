@@ -10,6 +10,7 @@
 
 - [ ] Add dict/list/sth. with default values for parameters (frequencies, durations, etc...) and implement that.
 - [ ] Create function to update pipeline output (e.g. new channels, novelties, ...).
+- [ ] Add more unit-tests.
 - [x] `add_channel_to_pipeline`, `add_novelty_to_pipeline`: Add functionality.
 - [x] `create_pipeline`: Only allow unique pipeline names.
 - [ ] `_add_handlers`: Fallback case on failed connection.
