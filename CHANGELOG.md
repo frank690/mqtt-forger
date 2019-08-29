@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.0.34 (2019-08-29)
+
+* Added default values as dict in NoveltyProducer/Manager.py.
+* Updated TODO.md.
+
 ## 0.0.33 (2019-08-29)
 
 * Bugfix in tests/test_manager.py.
