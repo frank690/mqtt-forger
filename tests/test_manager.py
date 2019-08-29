@@ -91,8 +91,8 @@ class TestBaseUnit(TestCase):
         
         # create_pipeline
         man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
-        pipe_id = str([k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == 'sffresch'][0])
-        self.assertIsInstance(man.Scheduler.get_job(pipe_id), Job)
+        pipe_id = [k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == 'sffresch'][0]
+        self.assertIsInstance(man.Scheduler.get_job(int(pipe_id)), Job)
         
         # switch_pipeline (on to off)
         pipeline_status = man.pipelines[pipe_id]['active']

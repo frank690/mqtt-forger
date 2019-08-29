@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.32 (2019-08-29)
+
+* Bugfix in tests/test_manager.py.
+
 ## 0.0.31 (2019-08-29)
 
 * Rearranged contents of `test_value_output(...)` to `test_type_output(...)` in tests/test_manager.py.
