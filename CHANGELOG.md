@@ -1,5 +1,15 @@
 # NoveltyProducer - Changelog
 
+## 0.0.29 (2019-08-29)
+
+* Updated TODO.md.
+* Modifications in NoveltyProducer/Manager.py.
+    - Renamed `add_novelty_to_channel(...)` to `add_novelty_to_pipeline(...)`.
+    - Added functionality to `add_channel_to_pipeline(...)` and `add_novelty_to_pipeline(...)`.
+    - Modified `_add_pipeline(...)` to make sure that pipeline names are unique.
+        - Added `_get_unique_name(...)` and `_count_up(...)`.
+* Adjusted test-requirements.txt since re lib is now used in NoveltyProducer/Manager.py.
+
 ## 0.0.28 (2019-08-28)
 
 * Renamed docs/README.rst to docs/index.rst.

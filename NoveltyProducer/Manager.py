@@ -2,6 +2,7 @@
 
 from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
+from re import search as research
 import paho.mqtt.client as mqtt
 
 class InvalidInputTypeError(Exception):
@@ -77,20 +78,24 @@ class Manager:
         limits_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
         frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
         """
-        # TODO:
-        pass
+        # add channel
+        channel_id = self._add_channel(channel_name_=name_, channel_limits_=limits_, channel_frequency_=frequency_)
+        # add channel to target pipeline
+        self.piplines[id_]['channel_id'] = self.piplines[id_]['channel_id'].union(set(str(channel_id)))
         
-    def add_novelty_to_channel(self, id_, frequency_=0.0167, duration_=5, impact_=1):
+    def add_novelty_to_pipeline(self, id_, frequency_=0.0167, duration_=5, impact_=1):
         """Add noise (novelty) to an already existing channel.
         
         Parameters:
-        id_ (mandatory, int): ID of channel.
+        id_ (mandatory, int): ID of pipeline.
         frequency_ (optional, string): Name of channel.
         duration_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
         impact_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
         """
-        # TODO:
-        pass
+        # add novelty
+        novelty_id = self._add_novelty(novelty_frequency_=frequency_, novelty_duration_=duration_, novelty_impact_=impact_)
+        # add novelty to target pipeline
+        self.piplines[id_]['novelty_id'] = self.piplines[id_]['novelty_id'].union(set(str(novelty_id)))
 
     def publish_data(self, id_):
         """Get data and publish it to target host.
@@ -150,11 +155,21 @@ class Manager:
         Note:
         - name_ can also be None or an empty string.
         """
+        # get all pipeline names.
+        pipeline_names = [v['name'] for k,v in self.pipelines.items()]
+        # new pipeline name already given?
+        if name_ in pipeline_names:
+            # get new unique name
+            name = self._get_unique_name(pipeline_names, name_)
+        else:
+            # new name is unique
+            name = name_
+        
         # get id of next key in pipeline dict
         id = len(self.pipelines.keys())
         # add entries to dict
         self.pipelines[id] = {
-            'name':name_,
+            'name':name,
             'host_id':host_id_,
             'topic_id':topic_id_,
             'channel_id':channel_id_,
@@ -255,6 +270,44 @@ class Manager:
         else:
             # TODO: stop job
             pass
+
+    def _get_unique_name(self, names_, name_):
+        """Find a new name for name_ so that it is unique in the list of names_.
+
+        Parameters:
+        names_ (mandatory, list of strings): List of names that are already in use.
+        name_ (mandatory, string): Name that should be unique to names_.
+        """
+        # set name to start with.
+        name = name_
+        # loop until name is unique.
+        while name in names_:
+            name = self._count_up(name)
+        
+        # return unique name
+        return name
+        
+    def _count_up(self, name_, suffix_='_'):
+        """Search for pattern in name_. Add that pattern if not found or add +1 to existing pattern.
+        
+        Parameters:
+        name_ (mandatory, string): Name that should be unique to names_.
+        suffix_ (optional, string): Will be attached to very end of name_.
+        """
+        # search for suffix and numbers at the very end of name.
+        search = research(r'[' + suffix_ + r']([0-9]+)$', name_)
+        # found something?
+        if search:
+            # what number was found?
+            num = int(search.group(0)[1:])
+            # add +1 to that number.
+            name = name_[:-len(search.group(0))] + suffix_ + str(num+1)
+        else:
+            # attach suffix
+            name = name_ + suffix_ + '0'
+        
+        return name
+        
 
     def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, \
                                   channel_frequency_, novelty_frequency_, novelty_duration_, novelty_impact_, pipeline_name_):
