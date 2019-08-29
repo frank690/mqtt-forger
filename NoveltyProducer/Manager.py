@@ -13,6 +13,10 @@ class InvalidInputValueError(Exception):
     """The InvalidInputValueError is raised whenever a specific input of a specific function has an invalid/unexpected value."""
     pass
     
+class OnConnectError(Exception):
+    """The OnConnectError is raised whenever the connection to a target system failed."""
+    pass
+    
 class Manager:
     """
     Class to connect to a given host and send data with a given frequency.
@@ -134,7 +138,10 @@ class Manager:
         # init mqtt client
         client = mqtt.Client()
         # connect to server
-        client.connect(self.connections[id_]['ip'], self.connections[id_]['port'])
+        try:
+            client.connect(self.connections[id_]['ip'], self.connections[id_]['port'], 60)
+        except Exception as err:
+            raise OnConnectError("Failed to establish connection to %s:%i - %s" % (self.connections[id_]['ip'], self.connections[id_]['port'], err))
 
         # init subdict
         self.handlers[id_] = {}
@@ -265,11 +272,11 @@ class Manager:
         self.pipelines[id_]['active'] = 1 - self.pipelines[id_]['active']
         # adjust current state of job accordingly.
         if (self.pipelines[id_]['active'] == 1):
-            # TODO: start job
-            pass
+            # resume job
+            self.Scheduler.get_job(str(id_)).resume()
         else:
-            # TODO: stop job
-            pass
+            # pause job
+            self.Scheduler.get_job(str(id_)).pause()
 
     def _get_unique_name(self, names_, name_):
         """Find a new name for name_ so that it is unique in the list of names_.

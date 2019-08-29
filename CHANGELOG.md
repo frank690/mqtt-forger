@@ -1,5 +1,13 @@
 # NoveltyProducer - Changelog
 
+## 0.0.30 (2019-08-29)
+
+* Updated TODO.md.
+* Modifications in NoveltyProducer/Manager.py.
+    - Added `OnConnectError(Exception)` class.
+    - Added try/catch on client connection in `_add_handlers(...)`.
+    - Jobs are now paused/resumed when `switch_pipeline(...)` is used.
+
 ## 0.0.29 (2019-08-29)
 
 * Updated TODO.md.
