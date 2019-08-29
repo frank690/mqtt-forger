@@ -28,3 +28,6 @@ foo b'{"timestamp": "2019-08-28T09:38:58.811185", "bar": -0.9641198905685163}'
 foo b'{"timestamp": "2019-08-28T09:38:59.817089", "bar": -0.9347151370201041}'
 foo b'{"timestamp": "2019-08-28T09:39:00.816615", "bar": -0.5475520657645743}'
 ~~~
+
+### What is left to do.
+Check out the [README.md](https://github.com/frank690/NoveltyProducer/blob/master/TODO.md).
