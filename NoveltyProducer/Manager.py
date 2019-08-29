@@ -23,6 +23,16 @@ class Manager:
     Class to connect to a given host and send data with a given frequency.
     This data may include regulary appearing novelties.
     """
+    
+    # set default init arguments
+    defaults = {}
+    defaults['channel_limits'] = [-1, 1]
+    defaults['channel_frequency'] = 0.1
+    defaults['novelty_frequency'] = 0.0167
+    defaults['novelty_duration'] = 5
+    defaults['novelty_impact'] = 1
+    defaults['pipeline_name'] = 'Pipe'
+        
     def __init__(self, verbose_=False):
         # init handlers
         self.Scheduler = BackgroundScheduler()
@@ -35,21 +45,13 @@ class Manager:
         self.topics = {} # contains topic informations
         self.channels = {} # contains channel informations
         self.novelties = {} # contains novelty informations
-        # set init arguments
-        self.defaults = {}
-        self.defaults['channel_limits'] = [-1, 1]
-        self.defaults['channel_frequency'] = 0.1
-        self.defaults['novelty_frequency'] = 0.0167
-        self.defaults['novelty_duration'] = 5
-        self.defaults['novelty_impact'] = 1
-        self.defaults['pipeline_name'] = 'Pipe'
         
         # init parameters
         self.verbose = verbose_
 
     def create_pipeline(self, ip_, port_, topic_, frequency_, channel_name_, \
-        channel_limits_=self.defaults['channel_limits'], channel_frequency_=self.defaults['channel_frequency'], novelty_frequency_=self.defaults['novelty_frequency'], \
-        novelty_duration_=self.defaults['novelty_duration'], novelty_impact_=self.defaults['novelty_impact'], pipeline_name_=self.defaults['pipeline_name']):
+        channel_limits_=defaults['channel_limits'], channel_frequency_=defaults['channel_frequency'], novelty_frequency_=defaults['novelty_frequency'], \
+        novelty_duration_=defaults['novelty_duration'], novelty_impact_=defaults['novelty_impact'], pipeline_name_=defaults['pipeline_name']):
         """Create pipeline and add each element to its dict. Start pipeline afterwards.
 
         Parameters:
@@ -83,7 +85,7 @@ class Manager:
         # add new job in scheduler
         self.Scheduler.add_job(func=self.publish_data, trigger='interval', seconds=(1/frequency_), id=str(pipeline_id), kwargs={'id_':pipeline_id})
 
-    def add_channel_to_pipeline(self, id_, name_, limits_=self.defaults['channel_limits'], frequency_=self.defaults['channel_frequency']):
+    def add_channel_to_pipeline(self, id_, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency']):
         """Add another channel to an already existing pipeline.
         
         Parameters:
@@ -97,7 +99,7 @@ class Manager:
         # add channel to target pipeline
         self.piplines[id_]['channel_id'] = self.piplines[id_]['channel_id'].union(set(str(channel_id)))
         
-    def add_novelty_to_pipeline(self, id_, frequency_=self.defaults['novelty_frequency'], duration_=self.defaults['novelty_duration'], impact_=self.defaults['novelty_impact']):
+    def add_novelty_to_pipeline(self, id_, frequency_=defaults['novelty_frequency'], duration_=defaults['novelty_duration'], impact_=defaults['novelty_impact']):
         """Add noise (novelty) to an already existing channel.
         
         Parameters:
@@ -230,7 +232,7 @@ class Manager:
         # return the id that has just been added
         return id
 
-    def _add_channel(self, name_, limits_=self.defaults['channel_limits'], frequency_=self.defaults['channel_frequency']):
+    def _add_channel(self, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency']):
         """Add channel to dict of channels.
 
         Parameters:
@@ -249,7 +251,7 @@ class Manager:
         # return the id that has just been added
         return id
 
-    def _add_novelty(self, frequency_=self.defaults['novelty_frequency'], duration_=self.defaults['novelty_duration'], impact_=self.defaults['novelty_impact']):
+    def _add_novelty(self, frequency_=defaults['novelty_frequency'], duration_=defaults['novelty_duration'], impact_=defaults['novelty_impact']):
         """Add novelty to dict of novelties.
 
         Parameters:

@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.35 (2019-08-29)
+
+* Bugfix in NoveltyProducer/Manager.py.
+
 ## 0.0.34 (2019-08-29)
 
 * Added default values as dict in NoveltyProducer/Manager.py.
