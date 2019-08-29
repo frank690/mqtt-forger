@@ -58,16 +58,6 @@ class TestBaseUnit(TestCase):
         self.assertEqual(nov_id, man.pipelines[pipe_id]['novelty_id'])
         self.assertEqual(1, man.pipelines[pipe_id]['active'])
         
-        # switch_pipeline (on to off)
-        pipeline_status = man.pipelines[pipe_id]['active']
-        man.switch_pipeline(pipe_id)
-        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
-        
-        # switch_pipeline (off to on)
-        pipeline_status = man.pipelines[pipe_id]['active']
-        man.switch_pipeline(pipe_id)
-        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
-        
     def test_type_output(self):
         """Test types of output"""
         
@@ -103,6 +93,16 @@ class TestBaseUnit(TestCase):
         man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
         pipe_id = str([k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == 'sffresch'][0])
         self.assertIsInstance(man.Scheduler.get_job(pipe_id), Job)
+        
+        # switch_pipeline (on to off)
+        pipeline_status = man.pipelines[pipe_id]['active']
+        man.switch_pipeline(pipe_id)
+        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
+        
+        # switch_pipeline (off to on)
+        pipeline_status = man.pipelines[pipe_id]['active']
+        man.switch_pipeline(pipe_id)
+        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
 
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
