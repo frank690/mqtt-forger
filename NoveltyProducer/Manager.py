@@ -5,6 +5,7 @@ from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
 from re import search as research
 import paho.mqtt.client as mqtt
+from IPython.core.debugger import set_trace
 
 class InvalidInputTypeError(Exception):
     """The InvalidInputTypeError is raised whenever a specific input of a specific function has an invalid/unexpected type."""
@@ -83,13 +84,31 @@ class Manager:
         limits_ (optional, list of floats): The lower/upper limits of the data.
         frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
         """
+        set_trace()
         # add channel
         cid = self._add_channel(name_=name_, limits_=limits_, frequency_=frequency_)
         # add channel to target pipeline
         self.pipelines[id_]['channel_id'].append(cid)
         # get new generator and pass it to technican
-        self._update_technican(id_, cid)
+        self._update_technican(id_)
 
+    def remove_channel_from_pipeline(self, cid_):
+        """Remove existing channel from each pipeline.
+        
+        Parameters:
+        cid_ (mandatory, int): ID of channel.
+        """
+        # remove channel from channel dict
+        self.channels.pop(cid_)
+        # loop each pipeline
+        for pid in self.pipelines:
+            # is channel id in pipeline?
+            if cid_ in self.pipelines[pid]['channel_id']:
+                # remove it.
+                self.pipelines[pid]['channel_id'].remove(cid_)
+                # call corresponding technican.
+                self._update_technican(pid)
+                
     def publish_data(self, id_):
         """Get data and publish it to target host.
 
@@ -102,13 +121,42 @@ class Manager:
         # publish data via client
         ret = self.handlers[id_]['mqtt'].publish(topic, jdata)
     
-    def _update_technican(self, pid_, cid_):
-        """Initialize instance of new Generator and pass it to technican.
+    def _update_technican(self, pid_):
+        """Get list of installed generators from technican. Compare with desired list. Take action if necessary.
+        
+        Parameters:
+        pid_ (mandatory, int): Pipeline id.
+        """
+        set_trace()
+        # get corresponding technican
+        techie = self.handlers[pid_]['technican']
+        
+        # get keys (channel ids) of generators
+        installed_generators = [key for key, gen in techie.generators.items()]
+        desired_generators = self.pipelines[pid_]['channel_id']
+        
+        # compare with current channel ids
+        todos = [g for g in installed_generators + desired_generators if g not in installed_generators or g not in desired_generators] 
+        
+        # anything to do?
+        for todo in todos:
+            # install new generators?
+            if todo in desired_generators:
+                self._add_generator(pid_, todo)
+            # remove installed generator?
+            elif todo in installed_generators:
+                self._remove_generator(pid_, todo)
+        
+    def _add_generator(self, pid_, cid_):
+        """Init new generator and update list of corresponding technican.
         
         Parameters:
         pid_ (mandatory, int): Pipeline id.
         cid_ (mandatory, int): Channel id.
         """
+        set_trace()
+        # get corresponding technican
+        techie = self.handlers[pid_]['technican']
         
         # create new generator
         gen = Generator(
@@ -117,13 +165,22 @@ class Manager:
             frequency_=self.channels[cid_]['frequency']
         )
         
-        # get corresponding technican
-        techie = self.handlers[pid_]['technican']
-        
         # add generator to his dict of generators
         techie.generators[cid_] = gen
-
-    
+        
+    def _remove_generator(self, pid_, cid_):
+        """Remove old generator and update list of corresponding technican.
+        
+        Parameters:
+        pid_ (mandatory, int): Pipeline id.
+        cid_ (mandatory, int): Channel id.
+        """
+        set_trace()
+        # get corresponding technican
+        techie = self.handlers[pid_]['technican']
+        # remove old generator from dict of generators
+        techie.generators.pop(pid_)
+        
     def _add_handlers(self, id_):
         """Initializes instance of Generator, Clients, etc.. Pass these instances to their corresponding dicts.
 

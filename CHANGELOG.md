@@ -1,5 +1,14 @@
 # NoveltyProducer - Changelog
 
+## 0.0.36 (2019-08-30)
+
+* Major changes in NoveltyProducer/Generator.py and NoveltyProducer/Manager.py.
+    - Added NoveltyProducer/Technican.py.
+    - Removed noise and all its related parameters/functions.
+    - Added several functions to handle dynamic adding/removing of generators.
+* Updated TODO.md.
+* Added json to test-requirements.txt.
+
 ## 0.0.35 (2019-08-29)
 
 * Bugfix in NoveltyProducer/Manager.py.

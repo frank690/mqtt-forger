@@ -11,12 +11,12 @@
 ### General
 
 - [x] Add Documentation.
+- [ ] 100% on unit tests.
+- [ ] Stop Scheduler when no generators are left in pipeline.
 
 ### Manager
 
-- [ ] Add more unit-tests.
-- [ ] Add functionality of adding/removing/changing handlers (mqtt and generators).
-
+- [x] Add functionality of adding/removing/changing generators.
 - [x] Create function to update pipeline output.
 - [x] Fully implement handling of multiple channels per pipeline.
 - [x] Add dict with default values for parameters (frequencies, durations, etc...) and implement that.
