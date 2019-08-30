@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from NoveltyProducer.Technican import Technican
 from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
 from re import search as research
@@ -21,16 +22,12 @@ class OnConnectError(Exception):
 class Manager:
     """
     Class to connect to a given host and send data with a given frequency.
-    This data may include regulary appearing novelties.
     """
     
     # set default init arguments
     defaults = {}
     defaults['channel_limits'] = [-1, 1]
     defaults['channel_frequency'] = 0.1
-    defaults['novelty_frequency'] = 0.0167
-    defaults['novelty_duration'] = 5
-    defaults['novelty_impact'] = 1
     defaults['pipeline_name'] = 'Pipe'
         
     def __init__(self, verbose_=False):
@@ -38,20 +35,18 @@ class Manager:
         self.Scheduler = BackgroundScheduler()
         # start scheduler
         self.Scheduler.start()        
-        # init dict for handlers, pipelines, connections, topics, channels and novelties
+        # init dict for handlers, pipelines, connections, topics and channels
         self.handlers = {} # contains instances of Generator
         self.pipelines = {} # contains ids of host, topic, ...
         self.connections = {} # contains host informations
         self.topics = {} # contains topic informations
         self.channels = {} # contains channel informations
-        self.novelties = {} # contains novelty informations
         
         # init parameters
         self.verbose = verbose_
 
     def create_pipeline(self, ip_, port_, topic_, frequency_, channel_name_, \
-        channel_limits_=defaults['channel_limits'], channel_frequency_=defaults['channel_frequency'], novelty_frequency_=defaults['novelty_frequency'], \
-        novelty_duration_=defaults['novelty_duration'], novelty_impact_=defaults['novelty_impact'], pipeline_name_=defaults['pipeline_name']):
+        channel_limits_=defaults['channel_limits'], channel_frequency_=defaults['channel_frequency'], pipeline_name_=defaults['pipeline_name']):
         """Create pipeline and add each element to its dict. Start pipeline afterwards.
 
         Parameters:
@@ -60,26 +55,20 @@ class Manager:
         topic_ (mandatory, string): Name of topic that data should be published on.
         frequency_ (mandatory, float): Frequency (in Hz) in that the data will be published on the given topic_.
         channel_name_ (mandatory, string): Name of the new channel.
-        channel_limits_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
+        channel_limits_ (optional, list of floats): The lower/upper limits of the data.
         channel_frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
-        novelty_frequency_ (optional, float): Frequency (in Hz) in that the novelty will appear.
-        novelty_duration_ (optional, float): The duration in seconds that the novelty will appear.
-        novelty_impact_ (optional, float): Scaling factor of the noise that will be produced during the novelty appearance.
         pipeline_name_ (optional, str): Name that a certain pipeline can later be associated with.
         """
         # check inputs
-        self._check_pipeline_materials(ip_, port_, topic_, frequency_, channel_name_, channel_limits_, \
-                                       channel_frequency_, novelty_frequency_, novelty_duration_, novelty_impact_, pipeline_name_)
+        self._check_pipeline_materials(ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, pipeline_name_)
         # add host
         host_id = self._add_connection(ip_, port_)
         # add topic
         topic_id = self._add_topic(topic_, frequency_)
         # add channel
         channel_id = self._add_channel(channel_name_, channel_limits_, channel_frequency_)
-        # add novelty
-        novelty_id = self._add_novelty(novelty_frequency_, novelty_duration_, novelty_impact_)
         # add everything to pipeline
-        pipeline_id = self._add_pipeline(pipeline_name_, host_id, topic_id, channel_id, novelty_id)
+        pipeline_id = self._add_pipeline(pipeline_name_, host_id, topic_id, channel_id)
         # init and assign generator for each new pipeline
         self._add_handlers(pipeline_id)
         # add new job in scheduler
@@ -91,27 +80,15 @@ class Manager:
         Parameters:
         id_ (mandatory, int): ID of pipeline.
         name_ (mandatory, string): Name of channel.
-        limits_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
+        limits_ (optional, list of floats): The lower/upper limits of the data.
         frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
         """
         # add channel
-        channel_id = self._add_channel(channel_name_=name_, channel_limits_=limits_, channel_frequency_=frequency_)
+        cid = self._add_channel(name_=name_, limits_=limits_, frequency_=frequency_)
         # add channel to target pipeline
-        self.piplines[id_]['channel_id'] = self.piplines[id_]['channel_id'].union(set(str(channel_id)))
-        
-    def add_novelty_to_pipeline(self, id_, frequency_=defaults['novelty_frequency'], duration_=defaults['novelty_duration'], impact_=defaults['novelty_impact']):
-        """Add noise (novelty) to an already existing channel.
-        
-        Parameters:
-        id_ (mandatory, int): ID of pipeline.
-        frequency_ (optional, string): Name of channel.
-        duration_ (optional, list of floats): The lower/upper limits of the 'normal-behaving' data.
-        impact_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
-        """
-        # add novelty
-        novelty_id = self._add_novelty(novelty_frequency_=frequency_, novelty_duration_=duration_, novelty_impact_=impact_)
-        # add novelty to target pipeline
-        self.piplines[id_]['novelty_id'] = self.piplines[id_]['novelty_id'].union(set(str(novelty_id)))
+        self.pipelines[id_]['channel_id'].append(cid)
+        # get new generator and pass it to technican
+        self._update_technican(id_, cid)
 
     def publish_data(self, id_):
         """Get data and publish it to target host.
@@ -121,9 +98,31 @@ class Manager:
         """
         # get topic, channelname and data in json format
         topic = self.topics[id_]['topic']
-        jdata = self.handlers[id_]['generator'].get_payload()
+        jdata = self.handlers[id_]['technican'].get_payload()
         # publish data via client
         ret = self.handlers[id_]['mqtt'].publish(topic, jdata)
+    
+    def _update_technican(self, pid_, cid_):
+        """Initialize instance of new Generator and pass it to technican.
+        
+        Parameters:
+        pid_ (mandatory, int): Pipeline id.
+        cid_ (mandatory, int): Channel id.
+        """
+        
+        # create new generator
+        gen = Generator(
+            name_=self.channels[cid_]['name'],
+            limits_=self.channels[cid_]['limits'], 
+            frequency_=self.channels[cid_]['frequency']
+        )
+        
+        # get corresponding technican
+        techie = self.handlers[pid_]['technican']
+        
+        # add generator to his dict of generators
+        techie.generators[cid_] = gen
+
     
     def _add_handlers(self, id_):
         """Initializes instance of Generator, Clients, etc.. Pass these instances to their corresponding dicts.
@@ -134,19 +133,25 @@ class Manager:
         Note:
         - ID in handlers dict will always be the same as the pipeline ID.
         """
-        # use given pipeline_id to get ids of other dicts.
-        tid = self.pipelines[id_]['topic_id']
-        cid = self.pipelines[id_]['channel_id']
-        nid = self.pipelines[id_]['novelty_id']
-        # gather required information from specific dicts and feed them to Generator instance.
-        gen = Generator(
-            channel_name_=self.channels[cid]['name'],
-            channel_limits_=self.channels[cid]['limits'], 
-            channel_frequency_=self.channels[cid]['frequency'], 
-            novelty_frequency_=self.novelties[nid]['frequency'],
-            novelty_duration_=self.novelties[nid]['duration'],
-            novelty_impact_=self.novelties[nid]['impact']
-            )        
+        # use given pipeline_id to get ids of channels.
+        cids = self.pipelines[id_]['channel_id']
+        
+        # create list to keep track of generators bought.
+        gens = {}
+        # loop over each given channel and get a generator for each.
+        for cid in cids:
+            # buy single generator
+            gen = Generator(
+                name_=self.channels[cid]['name'],
+                limits_=self.channels[cid]['limits'], 
+                frequency_=self.channels[cid]['frequency']
+                ) 
+            # append to list of generators
+            gens[cid] = gen
+            
+        # hire technican to get all generators working.
+        techie = Technican(gens)
+            
         # init mqtt client
         client = mqtt.Client()
         # connect to server
@@ -157,46 +162,9 @@ class Manager:
 
         # init subdict
         self.handlers[id_] = {}
-        # assign generator to handlers dict
-        self.handlers[id_]['generator'] = gen
+        # assign techie to handlers dict
+        self.handlers[id_]['technican'] = techie
         self.handlers[id_]['mqtt'] = client
-
-    def _add_pipeline(self, name_, host_id_, topic_id_, channel_id_, novelty_id_):
-        """Adding a new entry in the pipeline dictionary.
-        
-        Parameters:
-        name_ (mandatory, str): Name of the new pipeline.
-        host_id_ (mandatory, int): ID of host in host dictionary.
-        topic_id_ (mandatory, int): ID of topic in topic dictionary.
-        channel_id_ (mandatory, int): ID of channel in channel dictionary.
-        novelty_id_ (mandatory, int): ID of novelty in novelty dictionary.
-
-        Note:
-        - name_ can also be None or an empty string.
-        """
-        # get all pipeline names.
-        pipeline_names = [v['name'] for k,v in self.pipelines.items()]
-        # new pipeline name already given?
-        if name_ in pipeline_names:
-            # get new unique name
-            name = self._get_unique_name(pipeline_names, name_)
-        else:
-            # new name is unique
-            name = name_
-        
-        # get id of next key in pipeline dict
-        id = len(self.pipelines.keys())
-        # add entries to dict
-        self.pipelines[id] = {
-            'name':name,
-            'host_id':host_id_,
-            'topic_id':topic_id_,
-            'channel_id':channel_id_,
-            'novelty_id':novelty_id_,
-            'active':1
-        }
-        # return the id that has just been added
-        return id
 
     def _add_connection(self, ip_, port_):
         """Add connection to dict of connections.
@@ -251,25 +219,37 @@ class Manager:
         # return the id that has just been added
         return id
 
-    def _add_novelty(self, frequency_=defaults['novelty_frequency'], duration_=defaults['novelty_duration'], impact_=defaults['novelty_impact']):
-        """Add novelty to dict of novelties.
-
+    def _add_pipeline(self, name_, host_id_, topic_id_, channel_id_):
+        """Adding a new entry in the pipeline dictionary.
+        
         Parameters:
-        frequency_ (optional, float): Frequency (in Hz) in that the novelty will appear.
-        duration_ (optional, float): The duration in seconds that the novelty will appear.
-        impact_ (optional, float): Scaling factor of the noise that will be produced during the novelty appearance.
+        name_ (mandatory, str): Name of the new pipeline.
+        host_id_ (mandatory, int): ID of host in host dictionary.
+        topic_id_ (mandatory, int): ID of topic in topic dictionary.
+        channel_id_ (mandatory, int): ID of channel in channel dictionary.
 
         Note:
-        - A novelty is a random noise that will interfere with the original 'normal-behaving' signal.
-        - If the duration is equal or greater than the frequency, the influence of the novelty will stay permanently.
+        - name_ can also be None or an empty string.
         """
-        # get id of next entry in novelty dict
-        id = len(self.novelties.keys())
-        # add entry to dict
-        self.novelties[id] = {
-            'frequency':frequency_,
-            'duration':duration_,
-            'impact':impact_
+        # get all pipeline names.
+        pipeline_names = [v['name'] for k,v in self.pipelines.items()]
+        # new pipeline name already given?
+        if name_ in pipeline_names:
+            # get new unique name
+            name = self._get_unique_name(pipeline_names, name_)
+        else:
+            # new name is unique
+            name = name_
+        
+        # get id of next key in pipeline dict
+        id = len(self.pipelines.keys())
+        # add entries to dict
+        self.pipelines[id] = {
+            'name':name,
+            'host_id':host_id_,
+            'topic_id':topic_id_,
+            'channel_id':[channel_id_],
+            'active':1
         }
         # return the id that has just been added
         return id
@@ -327,8 +307,7 @@ class Manager:
         
         return name
         
-    def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, \
-                                  channel_frequency_, novelty_frequency_, novelty_duration_, novelty_impact_, pipeline_name_):
+    def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, pipeline_name_):
         """Check all inputs that are used to create a pipeline"""
         # ip_
         if not isinstance(ip_, str):
@@ -365,22 +344,6 @@ class Manager:
             raise InvalidInputTypeError("Content of channel_frequency_ is type %s but should be a of type int or float." % type(channel_frequency_))
         if channel_frequency_ <= 0:
             raise InvalidInputValueError("Value of channel_frequency_ (%s [Hz]) is negative or zero but should be positive." % str(channel_frequency_))
-            
-        # novelty_frequency_
-        if not isinstance(novelty_frequency_, (int, float)):
-            raise InvalidInputTypeError("Content of novelty_frequency_ is type %s but should be a of type int or float." % type(novelty_frequency_))
-        if novelty_frequency_ <= 0:
-            raise InvalidInputValueError("Value of novelty_frequency_ (%s [Hz]) is negative or zero but should be positive." % str(novelty_frequency_))
-            
-        # novelty_duration_
-        if not isinstance(novelty_duration_, (int, float)):
-            raise InvalidInputTypeError("Content of novelty_duration_ is type %s but should be a of type int or float." % type(novelty_duration_))
-        if novelty_duration_ < 0:
-            raise InvalidInputValueError("Value of novelty_duration_ (%s [s]) is negative but should be positive." % str(novelty_duration_))
-            
-        # novelty_impact_
-        if not isinstance(novelty_impact_, (int, float)):
-            raise InvalidInputTypeError("Content of novelty_impact_ is type %s but should be a of type int or float." % type(novelty_impact_))
             
         # pipeline_name_
         if not isinstance(pipeline_name_, str):

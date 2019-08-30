@@ -4,6 +4,7 @@
 
 - [ ] Update Documentation.
 - [ ] Create an Visualizer class.
+- [ ] Think about internal data flow and make changes if needed.
 
 ## version 0.1.x
 
@@ -13,10 +14,11 @@
 
 ### Manager
 
-- [ ] Fully implement handling of multiple channels and novelties per pipeline.
 - [ ] Add more unit-tests.
-- [ ] Create function to update pipeline output (e.g. new channels, novelties, ...).
+- [ ] Add functionality of adding/removing/changing handlers (mqtt and generators).
 
+- [x] Create function to update pipeline output.
+- [x] Fully implement handling of multiple channels per pipeline.
 - [x] Add dict with default values for parameters (frequencies, durations, etc...) and implement that.
 - [x] `add_channel_to_pipeline`, `add_novelty_to_pipeline`: Add functionality.
 - [x] `create_pipeline`: Only allow unique pipeline names.
@@ -25,5 +27,9 @@
     
 ### Generator
 
-- [ ] Adding option of different kind of data output (normal and novelty-wise).
-- [ ] Create function to update pipeline output (e.g. new channels, novelties, ...).
+- [ ] Add cyclic dead time.
+- [ ] Adding option of different kind of data output (currently just sin waves).
+
+### Technican
+
+- [x] Simplify Generator and Manager and introduce Technican instead.
