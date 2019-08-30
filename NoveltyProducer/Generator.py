@@ -19,11 +19,13 @@ class Generator:
     """
     Class to compute current value of an initialized channel.
     """
-    def __init__(self, name_, limits_, frequency_, seed_=None):
+    def __init__(self, name_, limits_, frequency_, dead_frequency_=1, dead_period_=0, seed_=None):
             # init parameters for this instance
             self.name=name_ # name of current channel
             self.limits=limits_ # lower/upper limits of data
             self.frequency=frequency_ # frequency in that the data will repeat itself
+            self.dead_frequency=dead_frequency_ # frequency in that the channels output will drop to zero
+            self.dead_period=dead_period_ # period (in seconds) of dead time
             self.seed=seed_ # random number seed
             
             # store basetime
@@ -53,6 +55,18 @@ class Generator:
         if self.frequency <= 0:
             raise InvalidInputValueError("Value of frequency_ is negative (%s) but should be positive." % str(self.frequency))
         
+        # dead_frequency_
+        if not isinstance(self.dead_frequency, (int, float)):
+            raise InvalidInputTypeError("Content of dead_frequency_ is type %s but should be a of type int or float." % type(self.dead_frequency))
+        if self.dead_frequency <= 0:
+            raise InvalidInputValueError("Value of dead_frequency_ is negative (%s) but should be positive." % str(self.dead_frequency))
+        
+        # dead_period_
+        if not isinstance(self.dead_period, (int, float)):
+            raise InvalidInputTypeError("Content of dead_period_ is type %s but should be a of type int or float." % type(self.dead_period))
+        if self.dead_period < 0:
+            raise InvalidInputValueError("Value of dead_period_ is negative (%s) but should be zero or positive." % str(self.dead_period))
+        
         # seed_
         if self.seed:
             if not isinstance(self.seed, int):
@@ -63,10 +77,14 @@ class Generator:
         """
         # get times since start
         seconds = self._seconds_since_init(cdt_)
-        # get current position in radiant degree
-        x = 2 * np.pi * ((seconds%(1/self.frequency)) / (1/self.frequency))
-        # compute y and rescale it
-        y = self._rescale(np.sin(x))
+        # dead time currently active?
+        if (seconds%(1/self.dead_frequency) < self.dead_period):
+            y = 0
+        else:
+            # get current position in radiant degree
+            x = 2 * np.pi * ((seconds%(1/self.frequency)) / (1/self.frequency))
+            # compute y and rescale it
+            y = self._rescale(np.sin(x))
         # return data
         return y
         

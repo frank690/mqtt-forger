@@ -5,7 +5,7 @@ from NoveltyProducer.Generator import Generator
 from apscheduler.schedulers.background import BackgroundScheduler
 from re import search as research
 import paho.mqtt.client as mqtt
-from IPython.core.debugger import set_trace
+# from IPython.core.debugger import set_trace
 
 class InvalidInputTypeError(Exception):
     """The InvalidInputTypeError is raised whenever a specific input of a specific function has an invalid/unexpected type."""
@@ -84,7 +84,6 @@ class Manager:
         limits_ (optional, list of floats): The lower/upper limits of the data.
         frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
         """
-        set_trace()
         # add channel
         cid = self._add_channel(name_=name_, limits_=limits_, frequency_=frequency_)
         # add channel to target pipeline
@@ -127,7 +126,6 @@ class Manager:
         Parameters:
         pid_ (mandatory, int): Pipeline id.
         """
-        set_trace()
         # get corresponding technican
         techie = self.handlers[pid_]['technican']
         
@@ -154,7 +152,6 @@ class Manager:
         pid_ (mandatory, int): Pipeline id.
         cid_ (mandatory, int): Channel id.
         """
-        set_trace()
         # get corresponding technican
         techie = self.handlers[pid_]['technican']
         
@@ -175,7 +172,6 @@ class Manager:
         pid_ (mandatory, int): Pipeline id.
         cid_ (mandatory, int): Channel id.
         """
-        set_trace()
         # get corresponding technican
         techie = self.handlers[pid_]['technican']
         # remove old generator from dict of generators
