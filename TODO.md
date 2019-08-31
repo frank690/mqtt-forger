@@ -12,7 +12,7 @@
 
 - [x] Add Documentation.
 - [ ] 100% on unit tests.
-- [ ] Stop Scheduler when no generators are left in pipeline.
+- [x] Stop Scheduler when no generators are left in pipeline.
 
 ### Manager
 

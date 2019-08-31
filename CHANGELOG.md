@@ -5,6 +5,7 @@
 * Major changes in NoveltyProducer/Manager.py.
     - Added several functions to handle dynamic adding/removing of generators.
     - Removed noise and all its related parameters/functions.
+    - pipelines are now automatically switched on/off if any/no channels are assigned to it.
 * Major changes in NoveltyProducer/Generator.py.
     - Removed noise and all its related parameters/functions.
     - Added possibility of cyclic deadtime.
