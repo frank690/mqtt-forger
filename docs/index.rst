@@ -11,10 +11,17 @@ Welcome to NoveltyProducer
 
 This is a python package to generate fake data and publish it via mqtt to specific host.
 
-***Source code***
+Source code
+=============
 
 https://github.com/frank690/NoveltyProducer
 
-***Documentation***
+Documentation
+=============
 
 https://NoveltyProducer.readthedocs.io/en/latest/
+
+Todo list
+=============
+
+https://github.com/frank690/NoveltyProducer/blob/master/TODO.md
