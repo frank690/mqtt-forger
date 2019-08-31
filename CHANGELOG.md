@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.36a (2019-08-31)
+
+* Merging issue.
+
 ## 0.0.36 (2019-08-30)
 
 * Major changes in NoveltyProducer/Manager.py.

@@ -1,4 +1,4 @@
-Welcome to NoveltyProducer
+Welcome to NoveltyProducer 
 ======================
 
 .. image:: https://travis-ci.org/frank690/NoveltyProducer.svg?branch=master
