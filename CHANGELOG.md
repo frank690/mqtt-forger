@@ -1,5 +1,14 @@
 # NoveltyProducer - Changelog
 
+## 0.0.37 (2019-09-01)
+
+* Updated TODO.md.
+* Modified NoveltyProducer/Manager.py.
+    - Introduced channel types (sin, random and fixed).
+    - Modified `_check_pipeline_materials` accordingly.
+* Modified NoveltyProducer/Generator.py.
+    - Introduced channel types (sin, random and fixed).
+
 ## 0.0.36a (2019-08-31)
 
 * Merging issue.

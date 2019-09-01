@@ -28,7 +28,7 @@
 ### Generator
 
 - [x] Add cyclic dead time.
-- [ ] Adding option of different kind of data output (currently just sin waves).
+- [x] Adding option of different kind of data output (currently just sin waves).
 
 ### Technican
 

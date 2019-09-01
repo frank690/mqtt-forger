@@ -19,11 +19,12 @@ class Generator:
     """
     Class to compute current value of an initialized channel.
     """
-    def __init__(self, name_, limits_, frequency_, dead_frequency_=1, dead_period_=0, seed_=None):
+    def __init__(self, name_, limits_, frequency_, type_='sin', dead_frequency_=1, dead_period_=0, seed_=None):
             # init parameters for this instance
             self.name=name_ # name of current channel
             self.limits=limits_ # lower/upper limits of data
             self.frequency=frequency_ # frequency in that the data will repeat itself
+            self.type=type_ # type of data generation. default is sin.
             self.dead_frequency=dead_frequency_ # frequency in that the channels output will drop to zero
             self.dead_period=dead_period_ # period (in seconds) of dead time
             self.seed=seed_ # random number seed
@@ -55,6 +56,10 @@ class Generator:
         if self.frequency <= 0:
             raise InvalidInputValueError("Value of frequency_ is negative (%s) but should be positive." % str(self.frequency))
         
+        # type_
+        if not isinstance(self.type, str):
+            raise InvalidInputTypeError("Content of type_ is type %s but should be a of type string." % type(self.type))
+        
         # dead_frequency_
         if not isinstance(self.dead_frequency, (int, float)):
             raise InvalidInputTypeError("Content of dead_frequency_ is type %s but should be a of type int or float." % type(self.dead_frequency))
@@ -81,10 +86,18 @@ class Generator:
         if (seconds%(1/self.dead_frequency) < self.dead_period):
             y = 0
         else:
-            # get current position in radiant degree
-            x = 2 * np.pi * ((seconds%(1/self.frequency)) / (1/self.frequency))
-            # compute y and rescale it
-            y = self._rescale(np.sin(x))
+            # what data is generated?
+            if self.type == 'sin':
+                # get current position in radiant degree
+                x = 2 * np.pi * ((seconds%(1/self.frequency)) / (1/self.frequency))
+                # compute y and rescale it
+                yr = np.sin(x)
+            elif self.type == 'random':
+                yr = np.random.rand()
+            elif self.type == 'fixed':
+                yr = 1
+            # rescale data.
+            y = self._rescale(yr)
         # return data
         return y
         

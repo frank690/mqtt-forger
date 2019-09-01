@@ -29,6 +29,7 @@ class Manager:
     defaults = {}
     defaults['channel_limits'] = [-1, 1]
     defaults['channel_frequency'] = 0.1
+    defaults['channel_type'] = 'sin'
     defaults['pipeline_name'] = 'Pipe'
     defaults['dead_frequency'] = 1
     defaults['dead_period'] = 0
@@ -49,8 +50,8 @@ class Manager:
         self.verbose = verbose_
 
     def create_pipeline(self, ip_, port_, topic_, frequency_, channel_name_, \
-        channel_limits_=defaults['channel_limits'], channel_frequency_=defaults['channel_frequency'], pipeline_name_=defaults['pipeline_name'],
-        dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
+        channel_limits_=defaults['channel_limits'], channel_frequency_=defaults['channel_frequency'], channel_type_=defaults['channel_type'],
+        pipeline_name_=defaults['pipeline_name'], dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
         """Create pipeline and add each element to its dict. Start pipeline afterwards.
 
         Parameters:
@@ -61,18 +62,19 @@ class Manager:
         channel_name_ (mandatory, string): Name of the new channel.
         channel_limits_ (optional, list of floats): The lower/upper limits of the data.
         channel_frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
+        channel_type_ (optional, string): The type of data production (e.g. default is sin-wave).
         pipeline_name_ (optional, str): Name that a certain pipeline can later be associated with.
         dead_frequency_ (optional, float): Frequency (in Hz) in that dead time will occur.
         dead_period_ (optional, float): Duration (in seconds) of dead time every time it occurs.
         """
         # check inputs
-        self._check_pipeline_materials(ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, pipeline_name_, dead_frequency_, dead_period_)
+        self._check_pipeline_materials(ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, channel_type_, pipeline_name_, dead_frequency_, dead_period_)
         # add host
         host_id = self._add_connection(ip_, port_)
         # add topic
         topic_id = self._add_topic(topic_, frequency_)
         # add channel
-        channel_id = self._add_channel(channel_name_, channel_limits_, channel_frequency_, dead_frequency_, dead_period_)
+        channel_id = self._add_channel(channel_name_, channel_limits_, channel_frequency_, channel_type_, dead_frequency_, dead_period_)
         # add everything to pipeline
         pipeline_id = self._add_pipeline(pipeline_name_, host_id, topic_id, channel_id)
         # init and assign generator for each new pipeline
@@ -81,7 +83,7 @@ class Manager:
         self.Scheduler.add_job(func=self.publish_data, trigger='interval', seconds=(1/frequency_), id=str(pipeline_id), kwargs={'id_':pipeline_id})
 
     def add_channel_to_pipeline(self, id_, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency'], 
-                                dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
+                                type_=defaults['channel_type'], dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
         """Add another channel to an already existing pipeline.
         
         Parameters:
@@ -91,7 +93,7 @@ class Manager:
         frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
         """
         # add channel
-        cid = self._add_channel(name_=name_, limits_=limits_, frequency_=frequency_, dead_frequency_=dead_frequency, dead_period_=dead_period)
+        cid = self._add_channel(name_=name_, limits_=limits_, frequency_=frequency_, type_=type_, dead_frequency_=dead_frequency_, dead_period_=dead_period_)
         # add channel to target pipeline
         self.pipelines[id_]['channel_id'].append(cid)
         # is pipeline currently inactive?
@@ -174,6 +176,7 @@ class Manager:
             name_=self.channels[cid_]['name'],
             limits_=self.channels[cid_]['limits'], 
             frequency_=self.channels[cid_]['frequency'],
+            type_=self.channels[cid_]['type'],
             dead_frequency_=self.channels[cid_]['dead_frequency'],
             dead_period_=self.channels[cid_]['dead_period']
         )
@@ -214,6 +217,7 @@ class Manager:
                 name_=self.channels[cid]['name'],
                 limits_=self.channels[cid]['limits'], 
                 frequency_=self.channels[cid]['frequency'],
+                type_=self.channels[cid]['type'],
                 dead_frequency_=self.channels[cid]['dead_frequency'],
                 dead_period_=self.channels[cid]['dead_period']
                 ) 
@@ -271,7 +275,7 @@ class Manager:
         # return the id that has just been added
         return id
 
-    def _add_channel(self, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency'], 
+    def _add_channel(self, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency'], type_=defaults['channel_type'],
                      dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
         """Add channel to dict of channels.
 
@@ -287,6 +291,7 @@ class Manager:
             'name':name_,
             'limits':limits_,
             'frequency':frequency_,
+            'type':type_,
             'dead_frequency':dead_frequency_,
             'dead_period':dead_period_
         }
@@ -380,8 +385,7 @@ class Manager:
             name = name_ + suffix_ + '0'
         
         return name
-        
-    def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, pipeline_name_):
+    def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, channel_type_,  pipeline_name_, dead_frequency_, dead_period_):
         """Check all inputs that are used to create a pipeline"""
         # ip_
         if not isinstance(ip_, str):
@@ -418,6 +422,10 @@ class Manager:
             raise InvalidInputTypeError("Content of channel_frequency_ is type %s but should be a of type int or float." % type(channel_frequency_))
         if channel_frequency_ <= 0:
             raise InvalidInputValueError("Value of channel_frequency_ (%s [Hz]) is negative or zero but should be positive." % str(channel_frequency_))
+            
+        # channel_type_
+        if not isinstance(channel_type_, str):
+            raise InvalidInputTypeError("Content of channel_type_ is type %s but should be a of type string." % type(channel_type_))
             
         # pipeline_name_
         if not isinstance(pipeline_name_, str):
