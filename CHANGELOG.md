@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.39 (2019-09-02)
+
+* Removed json from test-requirements.txt.
+
 ## 0.0.38 (2019-09-02)
 
 * Reworked all unit tests.

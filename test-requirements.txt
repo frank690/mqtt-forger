@@ -8,4 +8,3 @@ tox
 setuptools
 apscheduler
 paho-mqtt
-json
