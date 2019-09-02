@@ -48,7 +48,8 @@ class TestBaseUnit(TestCase):
         # get_data
         self.assertTrue(generator.get_data(generator.basetime) == 0)
         self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.25)) >= 14.99999999)
-        self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5)) == 0)
+        self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5)) <= 0.0000001)
+        self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5)) >= -0.0000001)
         self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.75)) <= -14.99999999)
 
     def test_invalid_inputs(self):
