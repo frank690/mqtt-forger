@@ -43,7 +43,7 @@ class TestBaseUnit(TestCase):
         min_rescaled = generator._rescale(-1)
         self.assertTrue(min_rescaled == -15)
         max_rescaled = generator._rescale(1)
-        self.assertTrue(min_rescaled == 15)
+        self.assertTrue(max_rescaled == 15)
         
         # get_data
         self.assertTrue(generator.get_date(generator.basetime) == 0)
@@ -79,7 +79,7 @@ class TestBaseUnit(TestCase):
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_='InvalidDeadPeriod')
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=-2)
             
         # seed_
         with self.assertRaises(InvalidInputTypeError):

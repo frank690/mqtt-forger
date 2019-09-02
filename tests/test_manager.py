@@ -4,6 +4,7 @@ import paho.mqtt.client as mqtt
 from unittest import TestCase
 from NoveltyProducer.Manager import Manager, InvalidInputTypeError, InvalidInputValueError
 from NoveltyProducer.Generator import Generator
+from NoveltyProducer.Technican import Technican
 from apscheduler.job import Job
 
 ip = 'test.mosquitto.org'
@@ -48,7 +49,7 @@ class TestBaseUnit(TestCase):
         self.assertEqual(dead_period, man.channels[chn_id]['dead_period'])
         
         # _add_pipeline
-        pipe_id = man._add_pipeline(name_=pipeline_name, host_id_=con_id, topic_id_=top_id, channel_id_=chn_id, novelty_id_=nov_id)
+        pipe_id = man._add_pipeline(name_=pipeline_name, host_id_=con_id, topic_id_=top_id, channel_id_=chn_id)
         self.assertEqual(pipeline_name, man.pipelines[pipe_id]['name'])
         self.assertEqual(con_id, man.pipelines[pipe_id]['host_id'])
         self.assertEqual(top_id, man.pipelines[pipe_id]['topic_id'])
@@ -79,7 +80,7 @@ class TestBaseUnit(TestCase):
         
         # _add_handlers
         man._add_handlers(pipe_id)
-        self.assertIsInstance(man.handlers[pipe_id]['generator'], Generator)
+        self.assertIsInstance(man.handlers[pipe_id]['technican'], Technican)
         self.assertIsInstance(man.handlers[pipe_id]['mqtt'], mqtt.Client)
         
         # create_pipeline

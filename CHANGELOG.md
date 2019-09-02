@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.0.40b (2019-09-02)
+
+* Bugfixes in unit tests.
+
 ## 0.0.40a (2019-09-02)
 
 * Bugfixes in unit tests.
