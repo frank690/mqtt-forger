@@ -23,7 +23,7 @@ class TestBaseUnit(TestCase):
         
         # _get_overall_output
         bt_0 = generator_0.basetime
-        bt_01 = bt_0 + datetime.timedelta(seconds=1)
+        bt_01 = bt_0 + datetime.timedelta(seconds=0.25)
         self.assertTrue(techie._get_overall_output('Foo', time_=bt_01) == 15)
         self.assertTrue(techie._get_overall_output('Foo') <= 15)
         self.assertTrue(techie._get_overall_output('Foo') >= -15)
