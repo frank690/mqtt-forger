@@ -1,6 +1,7 @@
 import numpy as np
 from unittest import TestCase
 from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
+import datetime
 
 class TestBaseUnit(TestCase):
 
@@ -8,104 +9,81 @@ class TestBaseUnit(TestCase):
         """Test types of output"""
         
         # init class
-        seed = 42
-        generator = Generator('Test', [-15, 15], 1, 1, 1, 3, seed)
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=1, dead_period_=0, seed_=42)
     
-        # _get_clean_data
-        clean_data = generator._get_clean_data()
-        clean_data_type = type(clean_data)
-        self.assertTrue(issubclass(clean_data_type, (float, np.floating)))
-
-        # _get_noise
-        noise_data_type = type(generator._get_clean_data())
-        self.assertTrue(issubclass(noise_data_type, (float, np.floating)))
-
-        # _get_times
-        self.assertTrue(isinstance(generator._get_times(), tuple))  
+        # _seconds_since_init
+        seconds = generator._seconds_since_init()
+        self.assertIsInstance(seconds, float)
 
         # _rescale
-        rescale_data_type = type(generator._rescale(clean_data))
+        rescale_data_type = type(generator._rescale(0.5))
         self.assertTrue(issubclass(rescale_data_type, (float, np.floating)))
 
         # get_data
-        data_type = type(generator.get_data())
+        data_type = type(generator.get_data(datetime.datetime.now()))
         self.assertTrue(issubclass(data_type, (float, np.floating)))
-        
-        # get_payload
-        self.assertTrue(isinstance(generator.get_payload(), str))
+
         
     def test_value_output(self):
         """Test delivered output of each function of generator class."""
         
         # init class
-        seed = 42
-        generator = Generator('Test', [-15, 15], 1, 1, 1, 3, seed)
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=1, dead_period_=0, seed_=42)
         
         # replant the seed
         generator._plant_a_seed()
         
-        # _get_times
-        times = generator._get_times()
+        # _seconds_since_init
+        seconds = generator._seconds_since_init(generator.basetime)
+        self.assertTrue(seconds == 0)
+        seconds = generator._seconds_since_init()
+        self.assertTrue(seconds > 0)
         
-        # _get_clean_data
-        clean_data_value = generator._get_clean_data(times)
-        self.assertTrue(clean_data_value <= max(generator.channel_limits))
-        self.assertTrue(clean_data_value >= min(generator.channel_limits))
-        
-        # _get_noise
-        noise_data_value = generator._get_noise(times)
-        self.assertTrue(noise_data_value <= generator.novelty_impact)
-        self.assertTrue(noise_data_value >= -generator.novelty_impact)
-        self.assertTrue(generator._get_noise() <= generator.novelty_impact)
-        self.assertTrue(generator._get_noise() >= -generator.novelty_impact)
-        
-        # replant the seed
-        generator._plant_a_seed()
+        # _rescale
+        min_rescaled = generator._rescale(-1)
+        self.assertTrue(min_rescaled == -15)
+        max_rescaled = generator._rescale(1)
+        self.assertTrue(min_rescaled == 15)
         
         # get_data
-        data_value = generator.get_data(times)
-        self.assertTrue(data_value == clean_data_value + noise_data_value)
-        
-        # _plant_a_seed
-        generator._plant_a_seed(123)
-        
+        self.assertTrue(generator.get_date(generator.basetime) == 0)
+        self.assertTrue(generator.get_date(generator.basetime + datetime.timedelta(seconds=0.25) == 15)
+        self.assertTrue(generator.get_date(generator.basetime + datetime.timedelta(seconds=0.5) == 0)
+        self.assertTrue(generator.get_date(generator.basetime + datetime.timedelta(seconds=0.75) == -15)
+
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
         # channel_name_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(1337, [-15, 15], 1, 0.1, 2, 3)
-        
+            invalid_generator = Generator(name_=1337, limits_=[-15, 15], frequency_=1, dead_frequency_=0.1, dead_period_=2)
+
         # channel_limits_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator('ThisWillFail', 'InvalidLimits', 1, 0.1, 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_='InvalidLimits', frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator('ThisWillFail', ['InvalidLimit', 15], 1, 0.1, 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=['InvalidLimit', 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
             
         # channel_frequency_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 'InvalidChannelFrequency', 0.1, 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_='InvalidChannelFrequency', type_='sin', dead_frequency_=0.1, dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 0, 0.1, 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=0, type_='sin', dead_frequency_=0.1, dead_period_=2)
             
-        # novelty_frequency_
+        # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 'InvalidNoveltyFrequency', 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_='InvalidDeadFrequency', dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0, 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0, dead_period_=2)
             
-        # novelty_duration_
+        # dead_period_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, 'InvalidNoveltyDuration', 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_='InvalidDeadPeriod')
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, -2, 3)
-            
-        # novelty_impact_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, 2, 'InvalidNoveltyImpact')
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
             
         # seed_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, 2, 3, 'InvalidSeed')
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2, 'InvalidSeed')
         with self.assertRaises(SeedReplantError):
-            invalid_generator = Generator('ThisWillFail', [-15, 15], 1, 0.1, 2, 3)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
             invalid_generator._plant_a_seed()

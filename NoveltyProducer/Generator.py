@@ -101,9 +101,12 @@ class Generator:
         # return data
         return y
         
-    def _seconds_since_init(self, cdt_):
+    def _seconds_since_init(self, cdt_=None):
         """ Get seconds since init of this class.
         """
+        # no time given?
+        if not cdt_:
+            cdt_ = datetime.now()
         # get time diff
         dt = cdt_ - self.basetime
         # get seconds since basetime

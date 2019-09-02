@@ -14,10 +14,10 @@ frequency = 1
 channel_name = 'bar'
 channel_limits = [-2, 2]
 channel_frequency = 0.1
-novelty_frequency = 0.01
-novelty_duration = 1
-novelty_impact = 1
 pipeline_name = 'pipe'
+type = 'sin'
+dead_frequency = 1
+dead_period = 0
 
 class TestBaseUnit(TestCase):
 
@@ -38,24 +38,21 @@ class TestBaseUnit(TestCase):
         self.assertEqual(frequency, man.topics[top_id]['frequency'])
         
         # _add_channel
-        chn_id = man._add_channel(name_=channel_name, limits_=channel_limits, frequency_=channel_frequency)
+        chn_id = man._add_channel(name_=channel_name, limits_=channel_limits, frequency_=channel_frequency,
+                                  type_=type, dead_frequency_=dead_frequency, dead_period_=dead_period)
         self.assertEqual(channel_name, man.channels[chn_id]['name'])
         self.assertEqual(channel_limits, man.channels[chn_id]['limits'])
         self.assertEqual(channel_frequency, man.channels[chn_id]['frequency'])
-        
-        # _add_novelty
-        nov_id = man._add_novelty(frequency_=novelty_frequency, duration_=novelty_duration, impact_=novelty_impact)
-        self.assertEqual(novelty_frequency, man.novelties[nov_id]['frequency'])
-        self.assertEqual(novelty_duration, man.novelties[nov_id]['duration'])
-        self.assertEqual(novelty_impact, man.novelties[nov_id]['impact'])
+        self.assertEqual(type, man.channels[chn_id]['type'])
+        self.assertEqual(dead_frequency, man.channels[chn_id]['dead_frequency'])
+        self.assertEqual(dead_period, man.channels[chn_id]['dead_period'])
         
         # _add_pipeline
         pipe_id = man._add_pipeline(name_=pipeline_name, host_id_=con_id, topic_id_=top_id, channel_id_=chn_id, novelty_id_=nov_id)
         self.assertEqual(pipeline_name, man.pipelines[pipe_id]['name'])
         self.assertEqual(con_id, man.pipelines[pipe_id]['host_id'])
         self.assertEqual(top_id, man.pipelines[pipe_id]['topic_id'])
-        self.assertEqual(chn_id, man.pipelines[pipe_id]['channel_id'])
-        self.assertEqual(nov_id, man.pipelines[pipe_id]['novelty_id'])
+        self.assertIn(chn_id, man.pipelines[pipe_id]['channel_id'])
         self.assertEqual(1, man.pipelines[pipe_id]['active'])
         
     def test_type_output(self):
@@ -76,12 +73,8 @@ class TestBaseUnit(TestCase):
         chn_id = man._add_channel(name_=channel_name, limits_=channel_limits, frequency_=channel_frequency)
         self.assertIsInstance(chn_id, int)
         
-        # _add_novelty
-        nov_id = man._add_novelty(frequency_=novelty_frequency, duration_=novelty_duration, impact_=novelty_impact)
-        self.assertIsInstance(nov_id, int)
-        
         # _add_pipeline
-        pipe_id = man._add_pipeline(name_='pipe', host_id_=con_id, topic_id_=top_id, channel_id_=chn_id, novelty_id_=nov_id)
+        pipe_id = man._add_pipeline(name_='pipe', host_id_=con_id, topic_id_=top_id, channel_id_=chn_id)
         self.assertIsInstance(pipe_id, int)
         
         # _add_handlers
@@ -148,22 +141,18 @@ class TestBaseUnit(TestCase):
         with self.assertRaises(InvalidInputValueError):
             invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, channel_frequency_=0)
 
-        # novelty_frequency_
+        # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, novelty_frequency_='42')
+            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, dead_frequency_='42')
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, novelty_frequency_=0)
+            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, dead_frequency_=0)
             
-        # novelty_duration_
+        # dead_period_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, novelty_duration_='42')
+            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, dead_period_='42')
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, novelty_duration_=-42)
-            
-        # novelty_impact_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, novelty_impact_='42')
+            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, dead_period_=-42)
 
-        # channel_name_
+        # pipeline_name_
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_=42)

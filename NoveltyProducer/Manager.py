@@ -385,6 +385,7 @@ class Manager:
             name = name_ + suffix_ + '0'
         
         return name
+        
     def _check_pipeline_materials(self, ip_, port_, topic_, frequency_, channel_name_, channel_limits_, channel_frequency_, channel_type_,  pipeline_name_, dead_frequency_, dead_period_):
         """Check all inputs that are used to create a pipeline"""
         # ip_

@@ -1,5 +1,12 @@
 # NoveltyProducer - Changelog
 
+## 0.0.38 (2019-09-02)
+
+* Reworked all unit tests.
+* Made cdt_ input in `_seconds_since_init` in NoveltyProducer/Generator.py optional.
+* Corrected typo in NoveltyProducer/Manager.py.
+* Added error classes and `_check_input` function to NoveltyProducer/Technican.py.
+
 ## 0.0.37 (2019-09-01)
 
 * Updated TODO.md.
