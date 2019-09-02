@@ -46,10 +46,10 @@ class TestBaseUnit(TestCase):
         self.assertTrue(max_rescaled == 15)
         
         # get_data
-        self.assertTrue(generator.get_date(generator.basetime) == 0)
-        self.assertTrue(generator.get_date(generator.basetime + datetime.timedelta(seconds=0.25)) == 15)
-        self.assertTrue(generator.get_date(generator.basetime + datetime.timedelta(seconds=0.5)) == 0)
-        self.assertTrue(generator.get_date(generator.basetime + datetime.timedelta(seconds=0.75)) == -15)
+        self.assertTrue(generator.get_data(generator.basetime) == 0)
+        self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.25)) == 15)
+        self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5)) == 0)
+        self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.75)) == -15)
 
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
