@@ -19,6 +19,9 @@ class Generator:
     """
     Class to compute current value of an initialized channel.
     """
+    
+    VALID_TYPES = ['sin', 'random', 'fixed']
+    
     def __init__(self, name_, limits_, frequency_, type_='sin', dead_frequency_=1, dead_period_=0, seed_=None):
             # init parameters for this instance
             self.name=name_ # name of current channel
@@ -59,6 +62,8 @@ class Generator:
         # type_
         if not isinstance(self.type, str):
             raise InvalidInputTypeError("Content of type_ is type %s but should be a of type string." % type(self.type))
+        if self.type not in self.VALID_TYPES:
+            raise InvalidInputValueError("Value of type_ (%s) is not valid." % str(self.type))
         
         # dead_frequency_
         if not isinstance(self.dead_frequency, (int, float)):

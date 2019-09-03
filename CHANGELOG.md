@@ -1,5 +1,13 @@
 # NoveltyProducer - Changelog
 
+## 0.1.0 (2019-09-03)
+
+* Added more unit tests.
+* Minor modifications in NoveltyProducer/Generator.py.
+    - Added VALID_TYPES in NoveltyProducer/Generator.py.
+    - `_check_input` now also checking for valid types.
+* `publish_data` in NoveltyProducer/Manager.py now returns mqtt status info.
+
 ## 0.0.40e (2019-09-02)
 
 * Bugfixes in unit tests.

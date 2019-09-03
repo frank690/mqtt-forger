@@ -135,6 +135,8 @@ class Manager:
         jdata = self.handlers[id_]['technican'].get_payload()
         # publish data via client
         ret = self.handlers[id_]['mqtt'].publish(topic, jdata)
+        
+        return ret
     
     def _update_technican(self, pid_):
         """Get list of installed generators from technican. Compare with desired list. Take action if necessary.

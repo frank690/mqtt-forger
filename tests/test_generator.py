@@ -70,6 +70,12 @@ class TestBaseUnit(TestCase):
         with self.assertRaises(InvalidInputValueError):
             invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=0, type_='sin', dead_frequency_=0.1, dead_period_=2)
             
+        # type_
+        with self.assertRaises(InvalidInputTypeError):
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_=1, dead_frequency_=0.1, dead_period_=2)
+        with self.assertRaises(InvalidInputValueError):
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=0, type_='fail', dead_frequency_=0.1, dead_period_=2)
+            
         # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_='InvalidDeadFrequency', dead_period_=2)

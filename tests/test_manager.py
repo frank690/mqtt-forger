@@ -56,6 +56,30 @@ class TestBaseUnit(TestCase):
         self.assertIn(chn_id, man.pipelines[pipe_id]['channel_id'])
         self.assertEqual(1, man.pipelines[pipe_id]['active'])
         
+        # switch_pipeline (on to off)
+        pipeline_status = man.pipelines[pipe_id]['active']
+        man.switch_pipeline(pipe_id)
+        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
+        
+        # switch_pipeline (off to on)
+        pipeline_status = man.pipelines[pipe_id]['active']
+        man.switch_pipeline(pipe_id)
+        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
+        
+        # add_channel_to_pipeline
+        man.add_channel_to_pipeline(pipe_id, channel_name + '_2')
+        self.assertEqual([chn_id, chn_id+1], man.pipelines[pipe_id]['channel_id'])
+        self.assertEqual(1, man.pipelines[pipe_id]['active'])
+        
+        # remove_channel_from_pipeline
+        man.remove_channel_from_pipeline(chn_id)
+        self.assertNotIn(chn_id, man.channels.keys())
+        
+        # publish_data
+        (rc, mid) = man.publish_data(pipe_id)
+        self.assertTrue(rc == 0)
+        self.assertTrue(mid >= 0)        
+        
     def test_type_output(self):
         """Test types of output"""
         
@@ -84,20 +108,14 @@ class TestBaseUnit(TestCase):
         self.assertIsInstance(man.handlers[pipe_id]['mqtt'], mqtt.Client)
         
         # create_pipeline
-        man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
-        pipe_id = [k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == 'sffresch'][0]
+        man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_=pipeline_name)
+        pipe_id = [k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == pipeline_name][0]
         self.assertIsInstance(man.Scheduler.get_job(str(pipe_id)), Job)
         
-        # switch_pipeline (on to off)
-        pipeline_status = man.pipelines[pipe_id]['active']
-        man.switch_pipeline(pipe_id)
-        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
-        
-        # switch_pipeline (off to on)
-        pipeline_status = man.pipelines[pipe_id]['active']
-        man.switch_pipeline(pipe_id)
-        self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
-
+        # publish_data
+        info = man.publish_data(pipe_id)
+        self.assertIsInstance(info, mqtt.MQTTMessageInfo)
+                
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
         
