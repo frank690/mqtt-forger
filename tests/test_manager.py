@@ -78,7 +78,8 @@ class TestBaseUnit(TestCase):
         self.assertTrue(mid >= 0)    
 
         # remove_channel_from_pipeline
-        for chn_id in man.pipelines[pipe_id]['channel_id']:
+        chn_ids = man.pipelines[pipe_id]['channel_id'].copy()
+        for chn_id in chn_ids:
             man.remove_channel_from_pipeline(chn_id)
             self.assertNotIn(chn_id, man.channels.keys())
         self.assertTrue(0 == man.pipelines[pipe_id]['active'])
