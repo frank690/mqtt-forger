@@ -51,6 +51,11 @@ class TestBaseUnit(TestCase):
         self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5)) <= 0.0000001)
         self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5)) >= -0.0000001)
         self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.75)) <= -14.99999999)
+        
+        # init another class
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='fixed', dead_frequency_=1, dead_period_=0, seed_=42)
+        generator._plant_a_seed(123)
+        self.assertTrue(generator.get_data(generator.basetime) >= 14.99999999)
 
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
@@ -74,7 +79,7 @@ class TestBaseUnit(TestCase):
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_=1, dead_frequency_=0.1, dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=0, type_='fail', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='fail', dead_frequency_=0.1, dead_period_=2)
             
         # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):

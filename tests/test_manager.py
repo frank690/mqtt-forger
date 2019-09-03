@@ -2,7 +2,7 @@ import copy
 import numpy as np
 import paho.mqtt.client as mqtt
 from unittest import TestCase
-from NoveltyProducer.Manager import Manager, InvalidInputTypeError, InvalidInputValueError
+from NoveltyProducer.Manager import Manager, InvalidInputTypeError, InvalidInputValueError, OnConnectError
 from NoveltyProducer.Generator import Generator
 from NoveltyProducer.Technican import Technican
 from apscheduler.job import Job
@@ -84,6 +84,9 @@ class TestBaseUnit(TestCase):
             self.assertNotIn(chn_id, man.channels.keys())
         self.assertTrue(0 == man.pipelines[pipe_id]['active'])
         
+        # add_channel_to_pipeline (with empty pipeline)
+        chn_id = man.add_channel_to_pipeline(pipe_id, channel_name)
+                
     def test_type_output(self):
         """Test types of output"""
         
@@ -113,6 +116,7 @@ class TestBaseUnit(TestCase):
         
         # create_pipeline
         pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
+        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
         self.assertIsInstance(man.Scheduler.get_job(str(pipe_id)), Job)
         
         # publish_data
@@ -128,6 +132,8 @@ class TestBaseUnit(TestCase):
         # ip_
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = man.create_pipeline(ip_=127001, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name)
+        with self.assertRaises(OnConnectError):
+            invalid_generator = man.create_pipeline(ip_='this.will.fail.com', port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name)
         
         # port_
         with self.assertRaises(InvalidInputTypeError):
@@ -163,6 +169,10 @@ class TestBaseUnit(TestCase):
         with self.assertRaises(InvalidInputValueError):
             invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, channel_frequency_=0)
 
+        # channel_type_
+        with self.assertRaises(InvalidInputTypeError):
+            invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, channel_type_=42)
+            
         # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, dead_frequency_='42')
@@ -178,3 +188,4 @@ class TestBaseUnit(TestCase):
         # pipeline_name_
         with self.assertRaises(InvalidInputTypeError):
             invalid_generator = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_=42)
+            
