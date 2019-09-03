@@ -200,7 +200,7 @@ class Manager:
         # get corresponding technican
         techie = self.handlers[pid_]['technican']
         # remove old generator from dict of generators
-        techie.generators.pop(pid_)
+        techie.generators.pop(cid_)
         
     def _add_handlers(self, id_):
         """Initializes instance of Generator, Clients, etc.. Pass these instances to their corresponding dicts.
@@ -291,7 +291,7 @@ class Manager:
         frequency_ (optional, float): Frequency (in Hertz) in that the data will repeat itself.
         """
         # get id of next entry in channels dict
-        id = len(self.channels.keys())
+        id = 0 if len(self.channels.keys()) == 0 else max(self.channels.keys()) + 1
         # add entry to dict
         self.channels[id] = {
             'name':name_,

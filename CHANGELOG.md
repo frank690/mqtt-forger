@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.1.3 (2019-09-03)
+
+* Bugfix in `_remove_generator` in NoveltyProducer/Manager.py.
+
 ## 0.1.2 (2019-09-03)
 
 * Minor changes in NoveltyProducer/Manager.py.
