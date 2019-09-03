@@ -117,6 +117,7 @@ class TestBaseUnit(TestCase):
         # create_pipeline
         pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
         pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
+        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
         self.assertIsInstance(man.Scheduler.get_job(str(pipe_id)), Job)
         
         # publish_data
