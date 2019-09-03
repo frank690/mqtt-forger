@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.1.1 (2019-09-03)
+
+* Updated TODO.md.
+* Bugfixes in tests/test_manager.py.
+
 ## 0.1.0 (2019-09-03)
 
 * Added more unit tests.

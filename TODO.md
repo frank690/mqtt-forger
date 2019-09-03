@@ -2,9 +2,15 @@
 
 ## not scheduled
 
+- [ ] Update Documentation even more!
+- [ ] Think about internal data flow and make changes if needed.
+
+## version 0.2.x
+
+### General
+
 - [ ] Update Documentation.
 - [ ] Create an Visualizer class.
-- [ ] Think about internal data flow and make changes if needed.
 
 ## version 0.1.x
 
