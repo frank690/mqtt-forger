@@ -81,6 +81,8 @@ class Manager:
         self._add_handlers(pipeline_id)
         # add new job in scheduler
         self.Scheduler.add_job(func=self.publish_data, trigger='interval', seconds=(1/frequency_), id=str(pipeline_id), kwargs={'id_':pipeline_id})
+        # return id of pipeline that has just been created
+        return pipeline_id
 
     def add_channel_to_pipeline(self, id_, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency'], 
                                 type_=defaults['channel_type'], dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
@@ -102,6 +104,8 @@ class Manager:
             self.switch_pipeline(id_)
         # get new generator and pass it to technican
         self._update_technican(id_)
+        # return id of channel that has just been added
+        return cid
 
     def remove_channel_from_pipeline(self, cid_):
         """Remove existing channel from each pipeline.

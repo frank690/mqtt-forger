@@ -13,6 +13,7 @@ port = 1883
 topic = 'foo'
 frequency = 1
 channel_name = 'bar'
+sec_channel_name = 'zoo'
 channel_limits = [-2, 2]
 channel_frequency = 0.1
 pipeline_name = 'pipe'
@@ -57,9 +58,9 @@ class TestBaseUnit(TestCase):
         self.assertEqual(1, man.pipelines[pipe_id]['active'])
         
         # add_channel_to_pipeline
-        man.add_channel_to_pipeline(pipe_id, channel_name + '_2')
-        self.assertEqual([chn_id, chn_id+1], man.pipelines[pipe_id]['channel_id'])
-        self.assertEqual(1, man.pipelines[pipe_id]['active'])
+        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_=pipeline_name)
+        chn_id = man.add_channel_to_pipeline(pipe_id, sec_channel_name)
+        self.assertIn(chn_id, man.pipelines[pipe_id]['channel_id'])
 
         # switch_pipeline (on to off)
         pipeline_status = man.pipelines[pipe_id]['active']
@@ -71,14 +72,16 @@ class TestBaseUnit(TestCase):
         man.switch_pipeline(pipe_id)
         self.assertTrue(pipeline_status != man.pipelines[pipe_id]['active'])
 
-        # remove_channel_from_pipeline
-        man.remove_channel_from_pipeline(chn_id)
-        self.assertNotIn(chn_id, man.channels.keys())
-        
         # publish_data
         (rc, mid) = man.publish_data(pipe_id)
         self.assertTrue(rc == 0)
-        self.assertTrue(mid >= 0)        
+        self.assertTrue(mid >= 0)    
+
+        # remove_channel_from_pipeline
+        for chn_id in man.pipelines[pipe_id]['channel_id']:
+            man.remove_channel_from_pipeline(chn_id)
+            self.assertNotIn(chn_id, man.channels.keys())
+        self.assertTrue(0 == man.pipelines[pipe_id]['active'])
         
     def test_type_output(self):
         """Test types of output"""
@@ -108,8 +111,7 @@ class TestBaseUnit(TestCase):
         self.assertIsInstance(man.handlers[pipe_id]['mqtt'], mqtt.Client)
         
         # create_pipeline
-        man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
-        pipe_id = [k for k,v in man.pipelines.items() if man.pipelines[k]['name'] == 'sffresch'][0]
+        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, channel_name_=channel_name, pipeline_name_='sffresch')
         self.assertIsInstance(man.Scheduler.get_job(str(pipe_id)), Job)
         
         # publish_data

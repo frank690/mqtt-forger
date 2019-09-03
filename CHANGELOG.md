@@ -1,5 +1,12 @@
 # NoveltyProducer - Changelog
 
+## 0.1.2 (2019-09-03)
+
+* Minor changes in NoveltyProducer/Manager.py.
+    - `add_channel_to_pipeline` now returns channel id.
+    - `create_pipeline` now returns pipeline id.
+* Bugfixes in tests/test_manager.py.
+
 ## 0.1.1 (2019-09-03)
 
 * Updated TODO.md.
