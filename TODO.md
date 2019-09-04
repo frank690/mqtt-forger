@@ -10,14 +10,18 @@
 ### General
 
 - [ ] Update Documentation.
-- [ ] Create an Visualizer class.
+- [x] Create an Visualizer class.
+
+### Painter
+
+- [ ] Create/Delete Subplots dynamically.
 
 ## version 0.1.x
 
 ### General
 
 - [x] Add Documentation.
-- [ ] 100% on unit tests.
+- [x] 100% on unit tests.
 - [x] Stop Scheduler when no generators are left in pipeline.
 
 ### Manager

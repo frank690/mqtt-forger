@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.1.7 (2019-09-03)
+
+* Updated TODO.md.
+* Added first version of visualization tool (NoveltyProducer/Painter.py).
+
 ## 0.1.6 (2019-09-03)
 
 * Modified test in test/test_manager.py.
