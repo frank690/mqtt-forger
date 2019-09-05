@@ -7,7 +7,7 @@
 Use this class to produce artificial data and publish it via mqtt to a specific host.
 
 
-### How to start a simple data stream.
+#### How to start a simple data stream.
 ~~~py
 # import class
 from NoveltyProducer.Manager import Manager
@@ -21,7 +21,7 @@ pipe_id = man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15, 'bar')
 ~~~
 
 
-### What is streamed.
+#### What is streamed.
 ~~~py
 foo b'{"timestamp": "2019-08-28T09:38:55.814337", "bar": 0.5487491837412708}'
 foo b'{"timestamp": "2019-08-28T09:38:56.821802", "bar": -0.052118018113447295}'
@@ -32,7 +32,7 @@ foo b'{"timestamp": "2019-08-28T09:39:00.816615", "bar": -0.5475520657645743}'
 ~~~
 
 
-### Add another channel to the existing pipeline. Also add random noise to 'bar'.
+#### Add new channel 'star' to the existing pipeline. Also add random noise to channel 'bar'.
 ~~~py
 # add channel 'star'. 2 Hz sin-wave with altitudes of -3 to +5.
 # signal dies with 1 Hz for a period of 0.25s.
@@ -43,7 +43,7 @@ man.add_channel_to_pipeline(pipe_id, 'bar', [-0.5, 0.5], 'random')
 ~~~
 
 
-### What is streamed.
+#### What is streamed.
 ~~~py
 foo b'{"timestamp": "2019-09-05T14:05:39.355935", "bar": 0.0019120901409, "star": -1.888965311351}'
 foo b'{"timestamp": "2019-09-05T14:05:39.422260", "bar": 0.1024729790856, "star": -2.990286176688}'
@@ -54,5 +54,5 @@ foo b'{"timestamp": "2019-09-05T14:05:39.692327", "bar": 0.0673663504719, "star"
 ~~~
 
 
-### What is left to do.
+#### What is left to do.
 Check out the [TODO.md](https://github.com/frank690/NoveltyProducer/blob/master/TODO.md).
