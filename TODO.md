@@ -11,6 +11,7 @@
 
 - [ ] Update Documentation.
 - [x] Create an Visualizer class.
+- [ ] SSL, TLS connections to host.
 
 ### Painter
 
