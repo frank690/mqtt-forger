@@ -1,5 +1,13 @@
 # NoveltyProducer - Changelog
 
+## 0.1.8 (2019-09-06)
+
+* Updated TODO.md.
+* Major modifications in NoveltyProducer/Painter.py.
+    - Now displaying only last MEMORY seconds.
+    - Channels are now added/deleted dynamically (depending on the incoming data stream).
+    - Now catching the closing event of the window.
+
 ## 0.1.7 (2019-09-03)
 
 * Updated TODO.md.

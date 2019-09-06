@@ -14,7 +14,10 @@
 
 ### Painter
 
-- [ ] Create/Delete Subplots dynamically.
+- [x] Create/Delete Subplots dynamically.
+- [x] Catch closing plot.
+- [ ] Drawing must be faster than pipeline frequency.
+    - (use latest n seconds instead of x samples?)
 
 ## version 0.1.x
 

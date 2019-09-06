@@ -10,7 +10,7 @@ from datetime import datetime
 
 class Painter:
 
-    MAX_MSGS = 100
+    MEMORY = 5/(24*60*60) # 5 seconds
     DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
     DISPLAY_DATE_FORMAT = '%M:%S'
     
@@ -27,13 +27,14 @@ class Painter:
         # init plot
         plt.ion()
         self.fig, self.ax = plt.subplots()
-        self.lines, = self.ax.plot([],[], '-')
+        self.channels = {} 
         self.ax.set_autoscaley_on(True)
-
         self.hfmt = mdates.DateFormatter(self.DISPLAY_DATE_FORMAT)
         self.ax.xaxis.set_major_formatter(self.hfmt)
         self.ax.xaxis.set_major_locator(mdates.SecondLocator())
         self.ax.grid()
+        # figure events
+        self.fig.canvas.mpl_connect('close_event', self._on_close_figure)
         # client
         self.data = {}
         self.client = mqtt.Client()
@@ -58,20 +59,39 @@ class Painter:
         """
         # collect payload
         sample = json.loads(msg.payload.decode())
-        # get timestamp and convert to datetime
-        key = datetime.strptime(sample['timestamp'], self.DATE_FORMAT)
-        # create new subdict for nice timestamp
-        self.data[key] = {}
-        # add each key+value to datastore (except timestamp itself)
-        for k,v in sample.items():
-            if k != 'timestamp':
-                self.data[key][k] = v 
-        # store list of timestamps
-        self.times = [*self.data].copy()
-        # sort it
-        self.times.sort(reverse=True)
-        # make sure only latest data is kept.
-        self._remove_old_data()
+        # get latest timestamp
+        current_time = self._datestr2num(sample['timestamp'])
+        oldest_time = current_time - self.MEMORY
+        # get all channel names
+        current_names = [*sample.keys()]
+        current_names.remove('timestamp')
+        # get list of existing channels
+        old_names = [*self.channels.keys()]
+        
+        # loop over all channels
+        for name in list(set(current_names + old_names)):
+            # is channel unknown? 
+            if name not in old_names:
+                self._add_channel(name)
+            # channel in current sample?
+            if name in current_names:
+                # append new data to each channel
+                self.channels[name]['x'].append(current_time)
+                self.channels[name]['y'].append(sample[name])
+                
+            # make sure data is up-to-date
+            # create list for latest data
+            validx = []
+            validy = []
+            # remove old data
+            for (x,y) in zip(self.channels[name]['x'], self.channels[name]['y']):
+                if x >= oldest_time:
+                    validx.append(x)
+                    validy.append(y)
+            # assign new data
+            self.channels[name]['x'] = validx
+            self.channels[name]['y'] = validy
+            
         # update plot
         self._draw()
         
@@ -93,16 +113,9 @@ class Painter:
     def _draw(self):
         """Plot latest datapoints.
         """
-        # data to plot
-        x = [mdates.date2num(dt) for dt in self.times]
-        y = []
-        # loop over each timestamp to collect corresponding data.
-        for ts in self.times:
-            y.append(tuple(self.data[ts].values()))
-        
-        # update the plot
-        self.lines.set_xdata(x)
-        self.lines.set_ydata(y)
+        # loop over each channel and update plot
+        for chn in self.channels:
+            self.channels[chn]['line'].set_data(self.channels[chn]['x'], self.channels[chn]['y'])
         # make sure limits are correct
         self.ax.relim()
         self.ax.autoscale_view()
@@ -110,4 +123,20 @@ class Painter:
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
         
-    
+    def _on_close_figure(self, evt):
+        """Triggered when plot is closed by the user. End connection.
+        """
+        self.client.loop_stop()
+        
+    def _datestr2num(self, str_):
+        """Convert datestring to num
+        """
+        return mdates.date2num(datetime.strptime(str_, self.DATE_FORMAT))
+        
+    def _add_channel(self, channel_):
+        """Add new line to plot for a new channel
+        """
+        self.channels[channel_] = {}
+        self.channels[channel_]['line'] = self.ax.plot([],[], '-')[0]
+        self.channels[channel_]['x'] = []
+        self.channels[channel_]['y'] = []
