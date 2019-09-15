@@ -1,5 +1,12 @@
 # NoveltyProducer - Changelog
 
+## 0.1.9 (2019-09-15)
+
+* Did some modifications on NoveltyProducer/Manager.py for simplyfication.
+    - renamed several functions.
+    - removed adding of channel from creating pipeline function.
+    - adjusted tests/test_manager.py accordingly.
+
 ## 0.1.8 (2019-09-06)
 
 * Updated TODO.md.
