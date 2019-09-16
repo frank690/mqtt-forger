@@ -1,5 +1,9 @@
 # NoveltyProducer - Changelog
 
+## 0.1.10 (2019-09-16)
+
+* Minor bugfixes on test/test_manager.py.
+
 ## 0.1.9 (2019-09-15)
 
 * Did some modifications on NoveltyProducer/Manager.py for simplyfication.

@@ -54,12 +54,13 @@ class TestBaseUnit(TestCase):
         self.assertEqual(pipeline_name, man.pipelines[pipe_id]['name'])
         self.assertEqual(con_id, man.pipelines[pipe_id]['host_id'])
         self.assertEqual(top_id, man.pipelines[pipe_id]['topic_id'])
-        self.assertEqual(1, man.pipelines[pipe_id]['active'])
+        self.assertEqual(0, man.pipelines[pipe_id]['active'])
         
         # add_function
         pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_=pipeline_name)
         chn_id = man.add_function(pipe_id, sec_channel_name)
         self.assertIn(chn_id, man.pipelines[pipe_id]['channel_id'])
+        self.assertEqual(1, man.pipelines[pipe_id]['active'])
 
         # switch_pipeline (on to off)
         pipeline_status = man.pipelines[pipe_id]['active']
@@ -161,23 +162,23 @@ class TestBaseUnit(TestCase):
         # channel_limits_
         with self.assertRaises(InvalidInputTypeError):
             valid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency)
-            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, channel_limits_=42)
+            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, limits_=42)
         with self.assertRaises(InvalidInputValueError):
             valid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency)
-            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, channel_limits_=['-12.3', 13.5])
+            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, limits_=['-12.3', 13.5])
 
         # channel_frequency_
         with self.assertRaises(InvalidInputTypeError):
             valid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency) 
-            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, channel_frequency_='42')
+            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, frequency_='42')
         with self.assertRaises(InvalidInputValueError):
             valid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency)
-            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, channel_frequency_=0)
+            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, frequency_=0)
 
         # channel_type_
         with self.assertRaises(InvalidInputTypeError):
             valid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency)
-            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, channel_type_=42)
+            invalid_channel = man.add_function(pid_=valid_pipeline, channel_name_=channel_name, type_=42)
 
         # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):
