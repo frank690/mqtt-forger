@@ -2,6 +2,7 @@
 import json
 import numpy as np
 from datetime import datetime
+# from IPython.core.debugger import set_trace
 
 class InvalidInputTypeError(Exception):
     """The InvalidInputTypeError is raised whenever an instance of the Generator class is initialized with unexpected types of certain input variables."""
@@ -20,18 +21,21 @@ class Generator:
     Class to compute current value of an initialized channel.
     """
     
-    VALID_TYPES = ['sin', 'random', 'fixed']
+    VALID_TYPES = ['sin', 'random', 'fixed', 'replay']
     
-    def __init__(self, name_, limits_, frequency_, type_='sin', dead_frequency_=1, dead_period_=0, seed_=None):
+    def __init__(self, name_, frequency_=0.1, type_='sin', dead_frequency_=1, dead_period_=0, limits_=None, replay_data_=None, seed_=None):
             # init parameters for this instance
             self.name=name_ # name of current channel
-            self.limits=limits_ # lower/upper limits of data
             self.frequency=frequency_ # frequency in that the data will repeat itself
             self.type=type_ # type of data generation. default is sin.
             self.dead_frequency=dead_frequency_ # frequency in that the channels output will drop to zero
             self.dead_period=dead_period_ # period (in seconds) of dead time
+            self.limits=limits_ # lower/upper limits of data
+            self.replay_data=replay_data_ # data to replay
             self.seed=seed_ # random number seed
-            
+
+            # indexing for replay of data
+            self.replay_idx = 0
             # store basetime
             self.basetime = datetime.now()
             # check input types
@@ -47,12 +51,6 @@ class Generator:
         if not isinstance(self.name, str):
             raise InvalidInputTypeError("Content of name_ is type %s but should be a of type string." % type(self.name))
             
-        # limits_
-        if not isinstance(self.limits, list):
-            raise InvalidInputTypeError("Content of limits_ is type %s but should be a of type list." % type(self.limits))
-        if not all(isinstance(x, (int, float)) for x in self.limits):
-            raise InvalidInputValueError("Not all values of limits are of type int or float.")
-        
         # frequency_
         if not isinstance(self.frequency, (int, float)):
             raise InvalidInputTypeError("Content of frequency_ is type %s but should be a of type int or float." % type(self.frequency))
@@ -76,6 +74,18 @@ class Generator:
             raise InvalidInputTypeError("Content of dead_period_ is type %s but should be a of type int or float." % type(self.dead_period))
         if self.dead_period < 0:
             raise InvalidInputValueError("Value of dead_period_ is negative (%s) but should be zero or positive." % str(self.dead_period))
+        
+        # limits_
+        if self.limits:
+            if not isinstance(self.limits, list):
+                raise InvalidInputTypeError("Content of limits_ is type %s but should be a of type list." % type(self.limits))
+            if not all(isinstance(x, (int, float)) for x in self.limits):
+                raise InvalidInputValueError("Not all values of limits are of type int or float.")
+        
+        # replay_data_
+        if self.replay_data:
+            if not isinstance(self.replay_data, list):
+                raise InvalidInputTypeError("Content of data_ is type %s but should be of type list." % type(self.replay_data))
         
         # seed_
         if self.seed:
@@ -101,10 +111,18 @@ class Generator:
                 yr = np.random.rand()
             elif self.type == 'fixed':
                 yr = 1
-            # rescale data.
-            y = self._rescale(yr)
-        # return data
-        return y
+            elif self.type == 'replay':
+                # take sample
+                yr = self.replay_data[self.replay_idx]
+                self.replay_idx += 1
+                # reset replay idx
+                if self.replay_idx == len(self.replay_data): self.replay_idx = 0 
+            # do scaling if scale is given
+            if self.limits:
+                # rescale and return data.
+                return self._rescale(yr)
+            else:
+                return yr
         
     def _seconds_since_init(self, cdt_=None):
         """ Get seconds since init of this class.

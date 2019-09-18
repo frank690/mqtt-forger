@@ -27,13 +27,14 @@ class Manager:
     
     # set default init arguments
     defaults = {}
-    defaults['channel_limits'] = [-1, 1]
+    defaults['channel_limits'] = None
     defaults['channel_frequency'] = 0.1
     defaults['channel_type'] = 'sin'
     defaults['pipeline_name'] = 'Pipe'
     defaults['dead_frequency'] = 1
     defaults['dead_period'] = 0
-        
+    defaults['replay_data'] = None
+       
     def __init__(self, verbose_=False):
         # init handlers
         self.Scheduler = BackgroundScheduler()
@@ -80,10 +81,13 @@ class Manager:
         """Add a function to an already existing pipeline.
         
         Parameters:
-        pid_ (mandatory, int): ID of pipeline.
-        channel_name_ (mandatory, string): Name of channel.
-        limits_ (optional, list of floats): The lower/upper limits of the data.
-        frequency_ (optional, float): Frequency (in Hz) in that the data will repeat itself.
+        :param pid_: (mandatory, int) ID of pipeline.
+        :param channel_name_: (mandatory, string) Name of channel.
+        :param limits_: (optional, list of floats) The lower/upper limits of the data.
+        :param frequency_: (optional, float) Frequency (in Hz) in that the data will repeat itself.
+        :param type_: (optional, string) Defines kind of function that will be added (e.g. sine wave).
+        :param dead_frequency_: (optional, float) Frequency (in Hz) in that the function will return zero.
+        :param dead_period_: (optional, float) Duration in that the output will stay zero.
         """
         # check inputs
         self._check_inputs(channel_name_=channel_name_, channel_limits_=limits_, channel_frequency_=frequency_, channel_type_=type_, dead_frequency_=dead_frequency_, dead_period_=dead_period_)
@@ -98,6 +102,31 @@ class Manager:
         # get new generator and pass it to technican
         self._update_technican(pid_)
         # return id of channel that has just been added
+        return cid
+
+    def add_replay(self, pid_, data_, name_):
+        """Add an dataset that will be replayed.
+        
+        Parameters:
+        :param pid_: (mandatory, int) ID of pipeline.
+        :param data_: (mandatory, list) Data to replay.
+        :param name_: (mandatory, string) Name of channel.
+        """
+        # check inputs
+        self._check_inputs(replay_data_=data_, channel_name_=name_)
+        # get topic frequency
+        frequency = self.topics[pid_]['frequency']
+        # add channel
+        cid = self._add_channel(name_=name_, frequency_=frequency, type_='replay', replay_data_=data_)
+        # add channel to target pipeline
+        self.pipelines[pid_]['channel_id'].append(cid)
+        # is pipeline currently inactive?
+        if (self.pipelines[pid_]['active'] == 0):
+            # switch pipeline on
+            self.switch_pipeline(pid_)
+        # get new generator and pass it to technican
+        self._update_technican(pid_)
+        # return ids of channels that has just been added
         return cid
 
     def remove_channel(self, cid_):
@@ -177,7 +206,8 @@ class Manager:
             frequency_=self.channels[cid_]['frequency'],
             type_=self.channels[cid_]['type'],
             dead_frequency_=self.channels[cid_]['dead_frequency'],
-            dead_period_=self.channels[cid_]['dead_period']
+            dead_period_=self.channels[cid_]['dead_period'],
+            replay_data_=self.channels[cid_]['replay_data']
         )
         
         # add generator to his dict of generators
@@ -204,27 +234,9 @@ class Manager:
         Note:
         - ID in handlers dict will always be the same as the pipeline ID.
         """
-        # use given pipeline_id to get ids of channels.
-        cids = self.pipelines[id_]['channel_id']
-        
-        # create list to keep track of generators bought.
-        gens = {}
-        # loop over each given channel and get a generator for each.
-        for cid in cids:
-            # buy single generator
-            gen = Generator(
-                name_=self.channels[cid]['name'],
-                limits_=self.channels[cid]['limits'], 
-                frequency_=self.channels[cid]['frequency'],
-                type_=self.channels[cid]['type'],
-                dead_frequency_=self.channels[cid]['dead_frequency'],
-                dead_period_=self.channels[cid]['dead_period']
-                ) 
-            # append to list of generators
-            gens[cid] = gen
             
-        # hire technican to get all generators working.
-        techie = Technican(gens)
+        # hire technican
+        techie = Technican({})
             
         # init mqtt client
         client = mqtt.Client()
@@ -275,7 +287,7 @@ class Manager:
         return id
 
     def _add_channel(self, name_, limits_=defaults['channel_limits'], frequency_=defaults['channel_frequency'], type_=defaults['channel_type'],
-                     dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period']):
+                     dead_frequency_=defaults['dead_frequency'], dead_period_=defaults['dead_period'], replay_data_=defaults['replay_data']):
         """Add channel to dict of channels.
 
         Parameters:
@@ -292,8 +304,9 @@ class Manager:
             'frequency':frequency_,
             'type':type_,
             'dead_frequency':dead_frequency_,
-            'dead_period':dead_period_
-        }
+            'dead_period':dead_period_,
+            'replay_data':replay_data_
+            }
         # return the id that has just been added
         return id
 
@@ -417,10 +430,11 @@ class Manager:
             
         # channel_limits_
         if 'channel_limits_' in kwargs:
-            if not isinstance(kwargs['channel_limits_'], list):
-                raise InvalidInputTypeError("Content of channel_limits_ is type %s but should be a of type list." % type(kwargs['channel_limits_']))
-            if not all(isinstance(x, (int, float)) for x in kwargs['channel_limits_']):
-                raise InvalidInputValueError("Not all values of channel_limits_ are of type int or float.")
+            if kwargs['channel_limits_']:
+                if not isinstance(kwargs['channel_limits_'], list):
+                    raise InvalidInputTypeError("Content of channel_limits_ is type %s but should be a of type list." % type(kwargs['channel_limits_']))
+                if not all(isinstance(x, (int, float)) for x in kwargs['channel_limits_']):
+                    raise InvalidInputValueError("Not all values of channel_limits_ are of type int or float.")
             
         # channel_frequency_
         if 'channel_frequency_' in kwargs:
@@ -452,3 +466,8 @@ class Manager:
                 raise InvalidInputTypeError("Content of dead_period_ is type %s but should be a of type int or float." % type(kwargs['dead_period_']))
             if kwargs['dead_period_'] < 0:
                 raise InvalidInputValueError("Value of dead_period_ (%s [Hz]) is negative but should be zero or positive." % str(kwargs['dead_period_']))
+        
+        # replay_data_
+        if 'replay_data_' in kwargs:
+            if not isinstance(kwargs['replay_data_'], list):
+                raise InvalidInputTypeError("Content of replay_data_ is type %s but should be an list." % type(kwargs['replay_data']))

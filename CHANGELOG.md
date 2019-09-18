@@ -1,5 +1,21 @@
 # NoveltyProducer - Changelog
 
+## 0.1.11 (2019-09-18)
+
+* Modifications in NoveltyProducer/Generator.py.
+    - Parameter limits_ and frequency_ are now optional.
+    - New Parameter replay_data_ was added.
+    - Added internal parameter replay_idx.
+    - Adjusted `_check_input(...)` accordingly.
+    - Data type 'replay' now valid.
+    - Added 'replay' posibility to `get_data(...)`.
+* Modifications in NoveltyProducer/Manager.py.
+    - Changed default value for channel_limits to None.
+    - Added default value for replay_data.
+    - New function `add_replay(...)` to create channel with historic data.
+        - Adjusted `_add_generator(...)` and `_add_channel(...)` accordingly.
+    - Simplified `_add_handlers(...)`.
+    
 ## 0.1.10 (2019-09-16)
 
 * Minor bugfixes on test/test_manager.py.
