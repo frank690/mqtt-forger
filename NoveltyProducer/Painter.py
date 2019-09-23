@@ -137,6 +137,7 @@ class Painter:
         """Add new line to plot for a new channel
         """
         self.channels[channel_] = {}
-        self.channels[channel_]['line'] = self.ax.plot([],[], '-')[0]
+        self.channels[channel_]['line'] = self.ax.plot([],[], '-', label=str(channel_))[0]
         self.channels[channel_]['x'] = []
         self.channels[channel_]['y'] = []
+        self.ax.legend(loc=2)

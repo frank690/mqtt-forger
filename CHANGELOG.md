@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.1.12 (2019-09-23)
+
+* `get_data(...)` in NoveltyProducer/Generator.py input parameter is now optional.
+* NoveltyProducer/Painter.py now also dynamically plots legend of each plot (channel name).
+
 ## 0.1.11 (2019-09-18)
 
 * Modifications in NoveltyProducer/Generator.py.

@@ -92,9 +92,9 @@ class Generator:
             if not isinstance(self.seed, int):
                 raise InvalidInputTypeError("Content of seed_ is type %s but should be a of type int." % type(self.seed))          
     
-    def get_data(self, cdt_):
+    def get_data(self, cdt_=None):
         """ Get the data including the noise.
-        """
+        """        
         # get times since start
         seconds = self._seconds_since_init(cdt_)
         # dead time currently active?
