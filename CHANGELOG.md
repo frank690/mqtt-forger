@@ -1,5 +1,18 @@
 # NoveltyProducer - Changelog
 
+## 0.1.13 (2019-09-26)
+
+* Bugfix in `get_data(...)` in NoveltyProducer/Generator.py.
+* Modified NoveltyProducer/Painter.py.
+    - Now importing datetime instead of datetime.datetime.
+    - Introduced MAX_DELAY parameter
+    - MQTT Callback is now in seperate thread.
+    - Redrawing plot is now in seperate thread.
+        - Added `_run(...)` function to keep redrawing permanently.
+    - `_on_message(...)` now only draws payload when its still within MAX_DELAY.
+    - Added `_get_framerate(...)` to print current fps.
+    - Added `_remove_channel(...)` to remove channel when its datapoints are not shown anymore.
+
 ## 0.1.12 (2019-09-23)
 
 * `get_data(...)` in NoveltyProducer/Generator.py input parameter is now optional.

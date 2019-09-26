@@ -99,7 +99,7 @@ class Generator:
         seconds = self._seconds_since_init(cdt_)
         # dead time currently active?
         if (seconds%(1/self.dead_frequency) < self.dead_period):
-            y = 0
+            return 0
         else:
             # what data is generated?
             if self.type == 'sin':
