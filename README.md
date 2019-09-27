@@ -12,14 +12,16 @@ Use this class to produce artificial data and publish it via mqtt to a specific 
 # import class
 from NoveltyProducer.Manager import Manager
 
-# init instance
+# init manager instance
 man = Manager()
 
 # create a new pipeline that will send data onto the mqtt topic 'foo' with 15 Hz.
-# the data 'bar' is a sinus wave (default setting).
-pipe_id = man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15, 'bar')
-~~~
+pipe_id = man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15)
 
+# attach a function to the just created pipeline that will produce a sin-wave with an lower bound of -1 and upper bound of 3.
+# The sine wave will have an 0.5 Hz frequency.
+channel_id = man.add_function(pipe_id, 'bar', [-1, 3], 0.5)
+~~~
 
 #### What is streamed.
 ~~~py
@@ -31,28 +33,28 @@ foo b'{"timestamp": "2019-08-28T09:38:59.817089", "bar": -0.9347151370201041}'
 foo b'{"timestamp": "2019-08-28T09:39:00.816615", "bar": -0.5475520657645743}'
 ~~~
 
-
-#### Add new channel 'star' to the existing pipeline. Also add random noise to channel 'bar'.
+#### How to visualize the data flow.
 ~~~py
-# add channel 'star'. 2 Hz sin-wave with altitudes of -3 to +5.
-# signal dies with 1 Hz for a period of 0.25s.
-man.add_channel_to_pipeline(pipe_id, 'star', [-3, 5], 2, 'sin', 1, 0.25)
+# import class
+from NoveltyProducer.Painter import Painter
 
-# add random noise to the existing channel 'bar'.
-man.add_channel_to_pipeline(pipe_id, 'bar', [-0.5, 0.5], 'random')
+# init painter instance and listen to specific host ip, port and mqtt topic.
+Painter('test.mosquitto.org', 1883, 'foo')
 ~~~
 
+![Single Channel](img/example_1.png)
 
-#### What is streamed.
+#### Stack and/or add channels
 ~~~py
-foo b'{"timestamp": "2019-09-05T14:05:39.355935", "bar": 0.0019120901409, "star": -1.888965311351}'
-foo b'{"timestamp": "2019-09-05T14:05:39.422260", "bar": 0.1024729790856, "star": -2.990286176688}'
-foo b'{"timestamp": "2019-09-05T14:05:39.482744", "bar": -0.0138238005510, "star": -1.700181812509}'
-foo b'{"timestamp": "2019-09-05T14:05:39.550975", "bar": -0.0163670155393, "star": 0}'
-foo b'{"timestamp": "2019-09-05T14:05:39.625205", "bar": 0.1544977956158, "star": 0}'
-foo b'{"timestamp": "2019-09-05T14:05:39.692327", "bar": 0.0673663504719, "star": 0}'
+# add noise to the already existing channel 'bar'
+noisy_id = man.add_function(pipe_id, 'bar', type_='random')
+
+# add another sine-wave as a new channel 'baz'. 
+# this channel has a dead time of 1 second. occuring every 2 seconds.
+another_channel_id = man.add_function(pipe_id, 'baz', dead_frequency_=0.5, dead_period_=1)
 ~~~
 
+![Multiple Channels](img/example_2.png)
 
 #### What is left to do.
 Check out the [TODO.md](https://github.com/frank690/NoveltyProducer/blob/master/TODO.md).

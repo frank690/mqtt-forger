@@ -1,5 +1,11 @@
 # NoveltyProducer - Changelog
 
+## 0.1.14 (2019-09-27)
+
+* Updated README.md.
+* Added img folder with example images of Painter output.
+* Uncommented output of FPS in `_draw(...)` in NoveltyProducer/Painter.py.
+
 ## 0.1.13 (2019-09-26)
 
 * Bugfix in `get_data(...)` in NoveltyProducer/Generator.py.

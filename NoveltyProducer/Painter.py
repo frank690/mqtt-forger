@@ -143,7 +143,7 @@ class Painter:
         self.fig.canvas.draw()
         self.fig.canvas.flush_events()
         # print framerate
-        # self._get_framerate()
+        self._get_framerate()
         
     def _on_close_figure(self, evt):
         """Triggered when plot is closed by the user. End connection.
