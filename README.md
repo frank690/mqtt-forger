@@ -56,5 +56,17 @@ another_channel_id = man.add_function(pipe_id, 'baz', dead_frequency_=0.5, dead_
 
 ![Multiple Channels](img/example_2.png)
 
+#### Stream your own dataset.
+~~~py
+# import numpy to generate some data
+import numpy as np
+
+# it is also possible to replay your own list of datapoints.
+data = [np.tanh(x) for x in np.linspace(-2, 2, 100)]
+
+# add new channel or combine channels.
+replay_channel_id = man.add_replay(pipe_id, data, 'tanh replay')
+~~~
+
 #### What is left to do.
 Check out the [TODO.md](https://github.com/frank690/NoveltyProducer/blob/master/TODO.md).

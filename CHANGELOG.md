@@ -1,5 +1,10 @@
 # NoveltyProducer - Changelog
 
+## 0.1.15 (2019-09-30)
+
+* Furter example in README.md.
+* Added another image to img.
+
 ## 0.1.14 (2019-09-27)
 
 * Updated README.md.
