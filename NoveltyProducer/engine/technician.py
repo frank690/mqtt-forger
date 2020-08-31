@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 
-from NoveltyProducer.Generator import Generator
+# import own libs
+from NoveltyProducer.engine import Generator
+from NoveltyProducer.auxiliary.exceptions import (
+    InvalidInputTypeError,
+    InvalidInputValueError
+)
+
+# import native libs
 from datetime import datetime
 import json
 
-class InvalidInputTypeError(Exception):
-    """The InvalidInputTypeError is raised whenever a specific input of a specific function has an invalid/unexpected type."""
-    pass
+"""Use this module to compute the signals and create the payload for the mqtt pipeline"""
 
-class InvalidInputValueError(Exception):
-    """The InvalidInputValueError is raised whenever a specific input of a specific function has an invalid/unexpected value."""
-    pass
 
-class Technican:
+class Technician:
     """Class to manage multiple generator instances at once.
     """
     def __init__(self, generators_):
-        """Pass the technican a dict of all generators (and their ids) he needs to take care of.
+        """Pass the Technician a dict of all generators (and their ids) he needs to take care of.
         """
         # store list locally
         self.generators = generators_
@@ -28,9 +30,11 @@ class Technican:
         """
         # generators_
         if not isinstance(self.generators, dict):
-            raise InvalidInputTypeError("The parameter generators_ is type %s but should be a of type dict." % type(self.generators))
+            raise InvalidInputTypeError("The parameter generators_ is type %s but should be a of type dict." %
+                                        type(self.generators))
         if not all(isinstance(gen, Generator) for key, gen in self.generators.items()):
-            raise InvalidInputValueError("Not all values of generators are an instance of class NoveltyProducer.Generator.")
+            raise InvalidInputValueError("Not all values of generators are an instance of "
+                                         "class NoveltyProducer.Generator.")
             
     def _get_overall_output(self, name_, time_=None):
         """Get the combined output of all generators.

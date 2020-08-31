@@ -1,21 +1,27 @@
 #!/usr/bin/env python3
 
+# import own libs
+
+# import 3rd party libs
 import paho.mqtt.client as mqtt
-import json
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
+# import native libs
 import datetime
-# from IPython.core.debugger import set_trace
+import json
+
+"""Use this module to visualize what is going on with the data transmission"""
+
 
 class Painter:
+    """Class to listen to an mqtt connection and draw all the data."""
+
     MAX_DELAY = 1/(24*60*60) # 1 second
     MEMORY = 5/(24*60*60) # 5 seconds
     DATE_FORMAT = '%Y-%m-%dT%H:%M:%S.%f'
     DISPLAY_DATE_FORMAT = '%M:%S'
-    
-    """Class to listen to an mqtt connection and draw all the data.
-    """
+
     def __init__(self, ip_, port_, topic_):
         """Pass information about target mqtt connection to init painter.
         """
@@ -60,7 +66,7 @@ class Painter:
         """
         self.client.connect(self.ip, self.port, 60)
         self.client.loop_start()
-        #self.client.loop_forever()
+        # self.client.loop_forever()
 
     def _on_connect(self, client, userdata, flags, rc):
         """Define what to do when connection was established.
@@ -159,7 +165,7 @@ class Painter:
         """Add new line to plot for a new channel
         """
         self.channels[channel_] = {}
-        self.channels[channel_]['line'] = self.ax.plot([],[], '-', label=str(channel_))[0]
+        self.channels[channel_]['line'] = self.ax.plot([], [], '-', label=str(channel_))[0]
         self.channels[channel_]['x'] = []
         self.channels[channel_]['y'] = []
         self.ax.legend(loc=2)

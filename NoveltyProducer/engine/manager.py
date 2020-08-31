@@ -1,32 +1,30 @@
 #!/usr/bin/env python3
 
-from NoveltyProducer.Technican import Technican
-from NoveltyProducer.Generator import Generator
-from apscheduler.schedulers.background import BackgroundScheduler
+# import own libs
+from NoveltyProducer.engine import Technician
+from NoveltyProducer.engine import Generator
+from NoveltyProducer.auxiliary.exceptions import (
+    InvalidInputTypeError,
+    InvalidInputValueError,
+    OnConnectError,
+)
+
+# import native libs
 from re import search as research
+
+# import 3rd party libs
+from apscheduler.schedulers.background import BackgroundScheduler
 import paho.mqtt.client as mqtt
-# from IPython.core.debugger import set_trace
 
-class InvalidInputTypeError(Exception):
-    """The InvalidInputTypeError is raised whenever a specific input of a specific function has an invalid/unexpected type."""
-    pass
+"""Use this module to manage the complete mqtt process and all the other engine parts."""
 
-class InvalidInputValueError(Exception):
-    """The InvalidInputValueError is raised whenever a specific input of a specific function has an invalid/unexpected value."""
-    pass
-    
-class OnConnectError(Exception):
-    """The OnConnectError is raised whenever the connection to a target system failed."""
-    pass
-
-    
 class Manager:
     """
     Class to connect to a given host and send data with a given frequency.
     """
     
     # set default init arguments
-    defaults = {}
+    defaults = dict()
     defaults['channel_limits'] = None
     defaults['channel_frequency'] = 0.1
     defaults['channel_type'] = 'sin'
@@ -41,11 +39,11 @@ class Manager:
         # start scheduler
         self.Scheduler.start()        
         # init dict for handlers, pipelines, connections, topics and channels
-        self.handlers = {} # contains instances of Generator
-        self.pipelines = {} # contains ids of host, topic, ...
-        self.connections = {} # contains host informations
-        self.topics = {} # contains topic informations
-        self.channels = {} # contains channel informations
+        self.handlers = {}  # contains instances of Generator
+        self.pipelines = {}  # contains ids of host, topic, ...
+        self.connections = {}  # contains host informations
+        self.topics = {}  # contains topic informations
+        self.channels = {}  # contains channel informations
         
         # init parameters
         self.verbose = verbose_
@@ -96,11 +94,11 @@ class Manager:
         # add channel to target pipeline
         self.pipelines[pid_]['channel_id'].append(cid)
         # is pipeline currently inactive?
-        if (self.pipelines[pid_]['active'] == 0):
+        if self.pipelines[pid_]['active'] == 0:
             # switch pipeline on
             self.switch_pipeline(pid_)
-        # get new generator and pass it to technican
-        self._update_technican(pid_)
+        # get new generator and pass it to Technician
+        self._update_technician(pid_)
         # return id of channel that has just been added
         return cid
 
@@ -121,11 +119,11 @@ class Manager:
         # add channel to target pipeline
         self.pipelines[pid_]['channel_id'].append(cid)
         # is pipeline currently inactive?
-        if (self.pipelines[pid_]['active'] == 0):
+        if self.pipelines[pid_]['active'] == 0:
             # switch pipeline on
             self.switch_pipeline(pid_)
-        # get new generator and pass it to technican
-        self._update_technican(pid_)
+        # get new generator and pass it to Technician
+        self._update_technician(pid_)
         # return ids of channels that has just been added
         return cid
 
@@ -147,8 +145,8 @@ class Manager:
                 if len(self.pipelines[pid]['channel_id']) == 0:
                     # switch pipeline to inactive
                     self.switch_pipeline(pid)
-                # call corresponding technican.
-                self._update_technican(pid)
+                # call corresponding Technician.
+                self._update_technician(pid)
                 
     def publish_data(self, pid_):
         """Get data and publish it to target host.
@@ -158,20 +156,20 @@ class Manager:
         """
         # get topic, channelname and data in json format
         topic = self.topics[pid_]['topic']
-        jdata = self.handlers[pid_]['technican'].get_payload()
+        jdata = self.handlers[pid_]['technician'].get_payload()
         # publish data via client
         ret = self.handlers[pid_]['mqtt'].publish(topic, jdata)
         
         return ret
     
-    def _update_technican(self, pid_):
-        """Get list of installed generators from technican. Compare with desired list. Take action if necessary.
+    def _update_technician(self, pid_):
+        """Get list of installed generators from technician. Compare with desired list. Take action if necessary.
         
         Parameters:
         pid_ (mandatory, int): Pipeline id.
         """
-        # get corresponding technican
-        techie = self.handlers[pid_]['technican']
+        # get corresponding technician
+        techie = self.handlers[pid_]['technician']
         
         # get keys (channel ids) of generators
         installed_generators = [key for key, gen in techie.generators.items()]
@@ -190,14 +188,14 @@ class Manager:
                 self._remove_generator(pid_, todo)
         
     def _add_generator(self, pid_, cid_):
-        """Init new generator and update list of corresponding technican.
+        """Init new generator and update list of corresponding technician.
         
         Parameters:
         pid_ (mandatory, int): Pipeline id.
         cid_ (mandatory, int): Channel id.
         """
-        # get corresponding technican
-        techie = self.handlers[pid_]['technican']
+        # get corresponding technician
+        techie = self.handlers[pid_]['technician']
         
         # create new generator
         gen = Generator(
@@ -214,14 +212,14 @@ class Manager:
         techie.generators[cid_] = gen
         
     def _remove_generator(self, pid_, cid_):
-        """Remove old generator and update list of corresponding technican.
+        """Remove old generator and update list of corresponding technician.
         
         Parameters:
         pid_ (mandatory, int): Pipeline id.
         cid_ (mandatory, int): Channel id.
         """
-        # get corresponding technican
-        techie = self.handlers[pid_]['technican']
+        # get corresponding technician
+        techie = self.handlers[pid_]['technician']
         # remove old generator from dict of generators
         techie.generators.pop(cid_)
         
@@ -235,8 +233,8 @@ class Manager:
         - ID in handlers dict will always be the same as the pipeline ID.
         """
             
-        # hire technican
-        techie = Technican({})
+        # hire technician
+        techie = Technician({})
             
         # init mqtt client
         client = mqtt.Client()
@@ -249,7 +247,7 @@ class Manager:
         # init subdict
         self.handlers[id_] = {}
         # assign techie to handlers dict
-        self.handlers[id_]['technican'] = techie
+        self.handlers[id_]['technician'] = techie
         self.handlers[id_]['mqtt'] = client
 
     def _add_connection(self, ip_, port_):
@@ -263,8 +261,8 @@ class Manager:
         id = len(self.connections.keys())
         # add connection to dict
         self.connections[id] = {
-            'ip':ip_,
-            'port':port_
+            'ip': ip_,
+            'port': port_
         }
         # return the id that has just been added
         return id

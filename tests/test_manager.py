@@ -1,10 +1,7 @@
-import copy
-import numpy as np
 import paho.mqtt.client as mqtt
 from unittest import TestCase
-from NoveltyProducer.Manager import Manager, InvalidInputTypeError, InvalidInputValueError, OnConnectError
-from NoveltyProducer.Generator import Generator
-from NoveltyProducer.Technican import Technican
+from NoveltyProducer.engine.manager import Manager, InvalidInputTypeError, InvalidInputValueError, OnConnectError
+from NoveltyProducer.engine.technician import Technican
 from apscheduler.job import Job
 
 ip = 'test.mosquitto.org'

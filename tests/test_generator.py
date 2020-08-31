@@ -1,6 +1,6 @@
 import numpy as np
 from unittest import TestCase
-from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
+from NoveltyProducer.engine.generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
 import datetime
 
 class TestBaseUnit(TestCase):

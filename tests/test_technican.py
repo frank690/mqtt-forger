@@ -1,7 +1,6 @@
 from unittest import TestCase
-from NoveltyProducer.Generator import Generator
-from NoveltyProducer.Technican import Technican, InvalidInputTypeError, InvalidInputValueError
-from apscheduler.job import Job
+from NoveltyProducer.engine.generator import Generator
+from NoveltyProducer.engine.technician import Technican, InvalidInputTypeError, InvalidInputValueError
 import datetime
 import json
 
