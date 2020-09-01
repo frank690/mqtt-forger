@@ -1,9 +1,22 @@
+# import 3rd party libs
 import paho.mqtt.client as mqtt
-from unittest import TestCase
-from NoveltyProducer.engine.manager import Manager, InvalidInputTypeError, InvalidInputValueError, OnConnectError
-from NoveltyProducer.engine.technician import Technican
 from apscheduler.job import Job
 
+# import own libs
+from transmitter.engine import Manager
+from transmitter.engine import Technician
+from transmitter.auxiliary.exceptions import (
+    InvalidInputTypeError,
+    InvalidInputValueError,
+    OnConnectError,
+)
+
+# import native libs
+from unittest import TestCase
+
+"""This module is executed by the travis ci to test the transmitter.engine.manager"""
+
+# define some test variables
 ip = 'test.mosquitto.org'
 # ip = 'localhost' 
 port = 1883
@@ -18,7 +31,9 @@ type = 'sin'
 dead_frequency = 1
 dead_period = 0
 
+
 class TestBaseUnit(TestCase):
+    """This class is used to test the transmitter.engine.manager"""
 
     def test_value_output(self):
         """Test output of each function."""
@@ -82,7 +97,7 @@ class TestBaseUnit(TestCase):
         self.assertTrue(0 == man.pipelines[pipe_id]['active'])
         
         # add_function (with empty pipeline)
-        chn_id = man.add_function(pipe_id, channel_name)
+        _ = man.add_function(pipe_id, channel_name)
                 
     def test_type_output(self):
         """Test types of output"""
@@ -108,12 +123,12 @@ class TestBaseUnit(TestCase):
         
         # _add_handlers
         man._add_handlers(pipe_id)
-        self.assertIsInstance(man.handlers[pipe_id]['technican'], Technican)
+        self.assertIsInstance(man.handlers[pipe_id]['technician'], Technician)
         self.assertIsInstance(man.handlers[pipe_id]['mqtt'], mqtt.Client)
         
         # create_pipeline
-        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_='sffresch')
-        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_='sffresch')
+        _ = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_='sffresch')
+        _ = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_='sffresch')
         pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_='sffresch')
         self.assertIsInstance(man.Scheduler.get_job(str(pipe_id)), Job)
         
@@ -131,7 +146,8 @@ class TestBaseUnit(TestCase):
         with self.assertRaises(InvalidInputTypeError):
             invalid_pipeline = man.create_pipeline(ip_=127001, port_=port, topic_=topic, frequency_=frequency)
         with self.assertRaises(OnConnectError):
-            invalid_pipeline = man.create_pipeline(ip_='this.will.fail.com', port_=port, topic_=topic, frequency_=frequency)
+            invalid_pipeline = man.create_pipeline(ip_='this.will.fail.com', port_=port,
+                                                   topic_=topic, frequency_=frequency)
         
         # port_
         with self.assertRaises(InvalidInputTypeError):
@@ -195,4 +211,5 @@ class TestBaseUnit(TestCase):
             
         # pipeline_name_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_=42)
+            invalid_pipeline = man.create_pipeline(ip_=ip, port_=port, topic_=topic,
+                                                   frequency_=frequency, pipeline_name_=42)

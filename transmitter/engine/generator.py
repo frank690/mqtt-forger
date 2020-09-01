@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 # import own libs
-from NoveltyProducer.auxiliary.exceptions import (
+from transmitter.auxiliary.constants import VALID_SIGNAL_TYPES
+from transmitter.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,
     SeedReplantError,
@@ -25,19 +26,18 @@ class Generator:
     """
     Class to compute current value of an initialized channel.
     """
-    
-    VALID_TYPES = ['sin', 'random', 'fixed', 'replay']
-    
-    def __init__(self, name_, frequency_=0.1, type_='sin', dead_frequency_=1, dead_period_=0, limits_=None, replay_data_=None, seed_=None):
+
+    def __init__(self, name_, frequency_=0.1, type_='sin', dead_frequency_=1,
+                 dead_period_=0, limits_=None, replay_data_=None, seed_=None):
         # init parameters for this instance
-        self.name=name_ # name of current channel
-        self.frequency=frequency_ # frequency in that the data will repeat itself
-        self.type=type_ # type of data generation. default is sin.
-        self.dead_frequency=dead_frequency_ # frequency in that the channels output will drop to zero
-        self.dead_period=dead_period_ # period (in seconds) of dead time
-        self.limits=limits_ # lower/upper limits of data
-        self.replay_data=replay_data_ # data to replay
-        self.seed=seed_ # random number seed
+        self.name = name_ # name of current channel
+        self.frequency = frequency_ # frequency in that the data will repeat itself
+        self.type = type_ # type of data generation. default is sin.
+        self.dead_frequency = dead_frequency_ # frequency in that the channels output will drop to zero
+        self.dead_period = dead_period_ # period (in seconds) of dead time
+        self.limits = limits_ # lower/upper limits of data
+        self.replay_data = replay_data_ # data to replay
+        self.seed = seed_ # random number seed
 
         # indexing for replay of data
         self.replay_idx = 0
@@ -69,7 +69,7 @@ class Generator:
         if not isinstance(self.type, str):
             raise InvalidInputTypeError("Content of type_ is type %s but should be a of type string." %
                                         type(self.type))
-        if self.type not in self.VALID_TYPES:
+        if self.type not in VALID_SIGNAL_TYPES:
             raise InvalidInputValueError("Value of type_ (%s) is not valid." %
                                          str(self.type))
         
@@ -110,8 +110,7 @@ class Generator:
                                             type(self.seed))
     
     def get_data(self, cdt_=None):
-        """ Get the data including the noise.
-        """        
+        """ Get the data including the noise."""
         # get times since start
         seconds = self._seconds_since_init(cdt_)
         # dead time currently active?
@@ -142,8 +141,7 @@ class Generator:
                 return yr
         
     def _seconds_since_init(self, cdt_=None):
-        """ Get seconds since init of this class.
-        """
+        """ Get seconds since init of this class."""
         # no time given?
         if not cdt_:
             cdt_ = datetime.now()
@@ -172,8 +170,7 @@ class Generator:
         return value
         
     def _plant_a_seed(self, seed_=None):
-        """ Set (or reset) a seed to the random noise generator.
-        """
+        """ Set (or reset) a seed to the random noise generator."""
         # seed given?
         if seed_:
             np.random.seed(seed_)
