@@ -16,7 +16,7 @@ install:
 
 # command to run tests
 script:
-  - py.test -v tests/  --doctest-modules --cov NoveltyProducer --cov-report term-missing
+  - py.test -v tests/  --doctest-modules --cov mqtt-forger --cov-report term-missing
 
 after_success:
   - coveralls
