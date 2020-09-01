@@ -4,8 +4,10 @@ import datetime
 import json
 
 # import own libs
-from transmitter.engine import Generator
-from transmitter.engine import Technician
+from transmitter.engine import (
+    Generator,
+    Technician,
+)
 from transmitter.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,

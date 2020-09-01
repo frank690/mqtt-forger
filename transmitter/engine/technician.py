@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # import own libs
 from transmitter.engine import Generator
 from transmitter.auxiliary.exceptions import (
@@ -53,7 +51,7 @@ class Technician:
         return sum(each_y)
     
     def _get_unique_channels(self):
-        """ Extract the unique channel namessince multiple generators can output on the same channel (name)."""
+        """ Extract the unique channel names since multiple generators can output on the same channel (name)."""
         return list(set([gen.name for key, gen in self.generators.items()]))
             
     def get_payload(self):

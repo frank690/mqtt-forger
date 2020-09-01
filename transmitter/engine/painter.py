@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # import from own libs
 from transmitter.auxiliary.constants import (
     MAX_DELAY,

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # import own libs
 from transmitter.auxiliary.constants import VALID_SIGNAL_TYPES
 from transmitter.auxiliary.exceptions import (
@@ -14,12 +12,7 @@ import numpy as np
 # import native libs
 from datetime import datetime
 
-
 """Use this module to generate multiple signals"""
-
-__all__ = [
-    'Generator',
-]
 
 
 class Generator:
