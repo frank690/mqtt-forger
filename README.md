@@ -1,7 +1,7 @@
-# NoveltyProducer
-[![Build Status](https://travis-ci.org/frank690/NoveltyProducer.svg?branch=master)](https://travis-ci.org/frank690/NoveltyProducer)
-[![Coverage Status](https://coveralls.io/repos/github/frank690/NoveltyProducer/badge.svg?branch=master)](https://coveralls.io/github/frank690/NoveltyProducer?branch=master)
-[![Documentation Status](https://readthedocs.org/projects/noveltyproducer/badge/?version=latest)](https://noveltyproducer.readthedocs.io/en/latest/?badge=latest)
+# mqtt-forger
+[![Build Status](https://travis-ci.org/frank690/mqtt-forger.svg?branch=master)](https://travis-ci.org/frank690/mqtt-forger)
+[![Coverage Status](https://coveralls.io/repos/github/frank690/mqtt-forger/badge.svg?branch=master)](https://coveralls.io/github/frank690/mqtt-forger?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/mqtt-forger/badge/?version=latest)](https://mqtt-forger.readthedocs.io/en/latest/?badge=latest)
 
 
 Use this class to produce artificial data and publish it via mqtt to a specific host.
@@ -10,7 +10,7 @@ Use this class to produce artificial data and publish it via mqtt to a specific 
 #### How to start a simple data stream.
 ~~~py
 # import class
-from NoveltyProducer.Manager import Manager
+from transmitter.engine import Manager
 
 # init manager instance
 man = Manager()
@@ -37,7 +37,7 @@ foo b'{"timestamp": "2019-08-28T09:39:00.816615", "bar": -0.5475520657645743}'
 #### How to visualize the data flow.
 ~~~py
 # import class
-from NoveltyProducer.Painter import Painter
+from transmitter.engine import Painter
 
 # init painter instance and listen to specific host ip, port and mqtt topic.
 Painter('test.mosquitto.org', 1883, 'foo')
@@ -70,4 +70,4 @@ replay_channel_id = man.add_replay(pipe_id, data, 'tanh replay')
 ~~~
 
 #### What is left to do.
-Check out the [TODO.md](https://github.com/frank690/NoveltyProducer/blob/master/TODO.md).
+Check out the [TODO.md](https://github.com/frank690/mqtt-forger/blob/master/TODO.md).

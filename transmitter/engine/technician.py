@@ -31,7 +31,7 @@ class Technician:
                                         type(self.generators))
         if not all(isinstance(gen, Generator) for key, gen in self.generators.items()):
             raise InvalidInputValueError("Not all values of generators are an instance of "
-                                         "class NoveltyProducer.Generator.")
+                                         "class transmitter.engine.generator.")
             
     def _get_overall_output(self, name_, time_=None):
         """Get the combined output of all generators.
