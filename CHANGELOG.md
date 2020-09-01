@@ -1,4 +1,10 @@
-# NoveltyProducer - Changelog
+# mqtt-forger - Changelog
+
+## 0.1.16 (2020-09-01)
+
+* Renamed repo from NoveltyProducer -> mqtt-forger
+    - Lots of changes to internal structure
+    - Lots of renaming, comments, etc.
 
 ## 0.1.15 (2019-09-30)
 

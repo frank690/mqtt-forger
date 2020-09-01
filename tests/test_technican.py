@@ -1,11 +1,23 @@
+# import native libs
 from unittest import TestCase
-from NoveltyProducer.Generator import Generator
-from NoveltyProducer.Technican import Technican, InvalidInputTypeError, InvalidInputValueError
-from apscheduler.job import Job
 import datetime
 import json
 
+# import own libs
+from transmitter.engine import (
+    Generator,
+    Technician,
+)
+from transmitter.auxiliary.exceptions import (
+    InvalidInputTypeError,
+    InvalidInputValueError,
+)
+
+"""This module is used by travis ci to test the transmitter.engine.techician"""
+
+
 class TestBaseUnit(TestCase):
+    """Class to run the unit tests."""
 
     def test_value_output(self):
         """Test output of each function."""
@@ -15,7 +27,7 @@ class TestBaseUnit(TestCase):
         generator_1 = Generator(name_='Bar', limits_=[-5, 5], frequency_=1, type_='random', dead_frequency_=1, dead_period_=0, seed_=42)
         generator_2 = Generator(name_='Bar', limits_=[-15, 15], frequency_=1, type_='fixed', dead_frequency_=1, dead_period_=1, seed_=42)
         # init instance of Technican
-        techie = Technican({0:generator_0, 1:generator_1, 2:generator_2})
+        techie = Technician({0: generator_0, 1: generator_1, 2: generator_2})
         
         # _get_unique_channels
         unique_channels = techie._get_unique_channels()
@@ -41,9 +53,10 @@ class TestBaseUnit(TestCase):
         """Test types of output"""
         
         # init instance of Generator
-        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=1, dead_period_=0, seed_=42)
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin',
+                              dead_frequency_=1, dead_period_=0, seed_=42)
         # init instance of Technican
-        techie = Technican({0:generator})
+        techie = Technician({0: generator})
         
         # _get_unique_channels
         unique_channels = techie._get_unique_channels()
@@ -63,6 +76,6 @@ class TestBaseUnit(TestCase):
        
         # generators_
         with self.assertRaises(InvalidInputTypeError):
-            Technican(42)
+            Technician(42)
         with self.assertRaises(InvalidInputValueError):
-            Technican({'some':'dictionary'})
+            Technician({'some': 'dictionary'})

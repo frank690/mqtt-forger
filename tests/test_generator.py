@@ -1,7 +1,20 @@
+# import own libs
+from transmitter.engine import Generator
+from transmitter.auxiliary.exceptions import (
+    InvalidInputTypeError,
+    InvalidInputValueError,
+    SeedReplantError,
+)
+
+# import 3rd party libs
 import numpy as np
 from unittest import TestCase
-from NoveltyProducer.Generator import Generator, InvalidInputTypeError, InvalidInputValueError, SeedReplantError
+
+# import native libs
 import datetime
+
+"""This module is executed by travis ci to test the transmitter.engine.generator"""
+
 
 class TestBaseUnit(TestCase):
 
@@ -9,7 +22,8 @@ class TestBaseUnit(TestCase):
         """Test types of output"""
         
         # init class
-        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=1, dead_period_=0, seed_=42)
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin',
+                              dead_frequency_=1, dead_period_=0, seed_=42)
     
         # _seconds_since_init
         seconds = generator._seconds_since_init()
@@ -23,12 +37,12 @@ class TestBaseUnit(TestCase):
         data_type = type(generator.get_data(datetime.datetime.now()))
         self.assertTrue(issubclass(data_type, (float, np.floating)))
 
-        
     def test_value_output(self):
         """Test delivered output of each function of generator class."""
         
         # init class
-        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=1, dead_period_=0, seed_=42)
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin',
+                              dead_frequency_=1, dead_period_=0, seed_=42)
         
         # replant the seed
         generator._plant_a_seed()
@@ -53,7 +67,8 @@ class TestBaseUnit(TestCase):
         self.assertTrue(generator.get_data(generator.basetime + datetime.timedelta(seconds=0.75)) <= -14.99999999)
         
         # init another class
-        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='fixed', dead_frequency_=1, dead_period_=0, seed_=42)
+        generator = Generator(name_='Foo', limits_=[-15, 15], frequency_=1,
+                              type_='fixed', dead_frequency_=1, dead_period_=0, seed_=42)
         generator._plant_a_seed(123)
         self.assertTrue(generator.get_data(generator.basetime) >= 14.99999999)
 
@@ -61,41 +76,54 @@ class TestBaseUnit(TestCase):
         """Test for all expected errors that should be raised when given invalid inputs"""
         # channel_name_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_=1337, limits_=[-15, 15], frequency_=1, dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_=1337, limits_=[-15, 15], frequency_=1,
+                                          dead_frequency_=0.1, dead_period_=2)
 
         # channel_limits_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_='InvalidLimits', frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_='InvalidLimits', frequency_=1,
+                                          type_='sin', dead_frequency_=0.1, dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=['InvalidLimit', 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=['InvalidLimit', 15], frequency_=1,
+                                          type_='sin', dead_frequency_=0.1, dead_period_=2)
             
         # channel_frequency_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_='InvalidChannelFrequency', type_='sin', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_='InvalidChannelFrequency',
+                                          type_='sin', dead_frequency_=0.1, dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=0, type_='sin', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=0,
+                                          type_='sin', dead_frequency_=0.1, dead_period_=2)
             
         # type_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_=1, dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_=1, dead_frequency_=0.1, dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='fail', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='fail', dead_frequency_=0.1, dead_period_=2)
             
         # dead_frequency_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_='InvalidDeadFrequency', dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='sin', dead_frequency_='InvalidDeadFrequency', dead_period_=2)
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='sin', dead_frequency_=0, dead_period_=2)
             
         # dead_period_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_='InvalidDeadPeriod')
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='sin', dead_frequency_=0.1, dead_period_='InvalidDeadPeriod')
         with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=-2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='sin', dead_frequency_=0.1, dead_period_=-2)
             
         # seed_
         with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2, seed_='InvalidSeed')
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='sin', dead_frequency_=0.1, dead_period_=2, seed_='InvalidSeed')
         with self.assertRaises(SeedReplantError):
-            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=0.1, dead_period_=2)
+            invalid_generator = Generator(name_='ThisWillFail', limits_=[-15, 15], frequency_=1,
+                                          type_='sin', dead_frequency_=0.1, dead_period_=2)
             invalid_generator._plant_a_seed()
