@@ -23,9 +23,12 @@ class TestBaseUnit(TestCase):
         """Test output of each function."""
         
         # init instance of Generator
-        generator_0 = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin', dead_frequency_=1, dead_period_=0, seed_=42)
-        generator_1 = Generator(name_='Bar', limits_=[-5, 5], frequency_=1, type_='random', dead_frequency_=1, dead_period_=0, seed_=42)
-        generator_2 = Generator(name_='Bar', limits_=[-15, 15], frequency_=1, type_='fixed', dead_frequency_=1, dead_period_=1, seed_=42)
+        generator_0 = Generator(name_='Foo', limits_=[-15, 15], frequency_=1, type_='sin',
+                                dead_frequency_=1, dead_period_=0, seed_=42)
+        generator_1 = Generator(name_='Bar', limits_=[-5, 5], frequency_=1, type_='random',
+                                dead_frequency_=1, dead_period_=0, seed_=42)
+        generator_2 = Generator(name_='Bar', limits_=[-15, 15], frequency_=1, type_='fixed',
+                                dead_frequency_=1, dead_period_=1, seed_=42)
         # init instance of Technican
         techie = Technician({0: generator_0, 1: generator_1, 2: generator_2})
         

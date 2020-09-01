@@ -27,7 +27,7 @@ sec_channel_name = 'zoo'
 channel_limits = [-2, 2]
 channel_frequency = 0.1
 pipeline_name = 'pipe'
-type = 'sin'
+wave_type = 'sin'
 dead_frequency = 1
 dead_period = 0
 
@@ -53,11 +53,11 @@ class TestBaseUnit(TestCase):
         
         # _add_channel
         chn_id = man._add_channel(name_=channel_name, limits_=channel_limits, frequency_=channel_frequency,
-                                  type_=type, dead_frequency_=dead_frequency, dead_period_=dead_period)
+                                  type_=wave_type, dead_frequency_=dead_frequency, dead_period_=dead_period)
         self.assertEqual(channel_name, man.channels[chn_id]['name'])
         self.assertEqual(channel_limits, man.channels[chn_id]['limits'])
         self.assertEqual(channel_frequency, man.channels[chn_id]['frequency'])
-        self.assertEqual(type, man.channels[chn_id]['type'])
+        self.assertEqual(wave_type, man.channels[chn_id]['type'])
         self.assertEqual(dead_frequency, man.channels[chn_id]['dead_frequency'])
         self.assertEqual(dead_period, man.channels[chn_id]['dead_period'])
         
@@ -69,7 +69,8 @@ class TestBaseUnit(TestCase):
         self.assertEqual(0, man.pipelines[pipe_id]['active'])
         
         # add_function
-        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic, frequency_=frequency, pipeline_name_=pipeline_name)
+        pipe_id = man.create_pipeline(ip_=ip, port_=port, topic_=topic,
+                                      frequency_=frequency, pipeline_name_=pipeline_name)
         chn_id = man.add_function(pipe_id, sec_channel_name)
         self.assertIn(chn_id, man.pipelines[pipe_id]['channel_id'])
         self.assertEqual(1, man.pipelines[pipe_id]['active'])
