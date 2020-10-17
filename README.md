@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/frank690/mqtt-forger.svg?branch=master)](https://travis-ci.org/frank690/mqtt-forger)
 [![Coverage Status](https://coveralls.io/repos/github/frank690/mqtt-forger/badge.svg?branch=master)](https://coveralls.io/github/frank690/mqtt-forger?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/mqtt-forger/badge/?version=latest)](https://mqtt-forger.readthedocs.io/en/latest/?badge=latest)
-
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Use this class to produce artificial data and publish it via mqtt to a specific host.
 

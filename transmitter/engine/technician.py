@@ -2,7 +2,7 @@
 from transmitter.engine import Generator
 from transmitter.auxiliary.exceptions import (
     InvalidInputTypeError,
-    InvalidInputValueError
+    InvalidInputValueError,
 )
 
 # import native libs
@@ -14,26 +14,31 @@ import json
 
 class Technician:
     """Class to manage multiple generator instances at once."""
+
     def __init__(self, generators_):
         """Pass the Technician a dict of all generators (and their ids) he needs to take care of."""
         # store list locally
         self.generators = generators_
         # check input types
         self._check_input()
-            
+
     def _check_input(self):
         """ Check the given input data for type."""
         # generators_
         if not isinstance(self.generators, dict):
-            raise InvalidInputTypeError("The parameter generators_ is type %s but should be a of type dict." %
-                                        type(self.generators))
+            raise InvalidInputTypeError(
+                "The parameter generators_ is type %s but should be a of type dict."
+                % type(self.generators)
+            )
         if not all(isinstance(gen, Generator) for key, gen in self.generators.items()):
-            raise InvalidInputValueError("Not all values of generators are an instance of "
-                                         "class transmitter.engine.generator.")
-            
+            raise InvalidInputValueError(
+                "Not all values of generators are an instance of "
+                "class transmitter.engine.generator."
+            )
+
     def _get_overall_output(self, name_, time_=None):
         """Get the combined output of all generators.
-        
+
         Parameters:
         :param name_: (Mandatory, string) Name of channel that the data should be extracted from.
         :param time_: (Optional, datetime) Timestamp that the data should be extracted from.
@@ -44,16 +49,20 @@ class Technician:
             time = datetime.now()
         else:
             time = time_
-        
+
         # loop over each generator and get each output.
-        each_y = [gen.get_data(time) for key, gen in self.generators.items() if gen.name == name_]
+        each_y = [
+            gen.get_data(time)
+            for key, gen in self.generators.items()
+            if gen.name == name_
+        ]
         # sum up each output and return it.
         return sum(each_y)
-    
+
     def _get_unique_channels(self):
         """ Extract the unique channel names since multiple generators can output on the same channel (name)."""
         return list(set([gen.name for key, gen in self.generators.items()]))
-            
+
     def get_payload(self):
         """ Gather the data of all generators and pack it into a nice json."""
         # get current time.
@@ -61,7 +70,7 @@ class Technician:
         # transform to iso
         iso = time.isoformat()
         # create payload template
-        data = {'timestamp': iso}
+        data = {"timestamp": iso}
         # get all channels
         chns = self._get_unique_channels()
         # loop over each unique channel and gather data.

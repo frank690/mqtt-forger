@@ -27,13 +27,13 @@ class Painter:
         self.ip = ip_
         self.port = port_
         self.topic = topic_
-        
+
         # internal definitions
         self.frametimes = []
         # init plot
         plt.ion()
         self.fig, self.ax = plt.subplots()
-        self.channels = {} 
+        self.channels = {}
         self.ax.set_autoscaley_on(True)
         self.hfmt = mdates.DateFormatter(DISPLAY_DATE_FORMAT)
         self.ax.xaxis.set_major_formatter(self.hfmt)
@@ -41,7 +41,7 @@ class Painter:
         self.ax.grid()
 
         # figure events
-        self.fig.canvas.mpl_connect('close_event', self._on_close_figure)
+        self.fig.canvas.mpl_connect("close_event", self._on_close_figure)
 
         # update plot the first time
         self._draw()
@@ -54,14 +54,15 @@ class Painter:
         self._establish_connection()
 
         # start redrawing
+        plt.show()
         self._run()
-        
+
     def _run(self):
         """Forever loop to update plot."""
         while True:
             # update plot
             self._draw()
-        
+
     def _establish_connection(self):
         """Establish connection to mqtt broker"""
         self.client.connect(self.ip, self.port, 60)
@@ -78,49 +79,51 @@ class Painter:
         # collect payload
         sample = json.loads(msg.payload.decode())
         # get latest timestamp
-        current_time = self._datestr2num(sample['timestamp'])
+        current_time = self._datestr2num(sample["timestamp"])
         # is current timestamp older than MAX_DELAY?
-        if (self._datestr2num(datetime.datetime.now().isoformat()) - MAX_DELAY) > current_time:
+        if (
+            self._datestr2num(datetime.datetime.now().isoformat()) - MAX_DELAY
+        ) > current_time:
             # skip current sample
             return
         # get theoretically oldest valid time
         oldest_time = current_time - MEMORY
         # get all channel names
         current_names = [*sample.keys()]
-        current_names.remove('timestamp')
+        current_names.remove("timestamp")
         # get list of existing channels
         old_names = [*self.channels.keys()]
-        
+
         # loop over all channels
         for name in list(set(current_names + old_names)):
-            # is channel unknown? 
+            # is channel unknown?
             if name not in old_names:
                 self._add_channel(name)
             # channel in current sample?
             if name in current_names:
                 # append new data to each channel
-                self.channels[name]['x'].append(current_time)
-                self.channels[name]['y'].append(sample[name])
-                
+                self.channels[name]["x"].append(current_time)
+                self.channels[name]["y"].append(sample[name])
+
             # make sure data is up-to-date
             # create list for latest data
             validx = []
             validy = []
             # remove old data
-            for (x, y) in zip(self.channels[name]['x'], self.channels[name]['y']):
+            for (x, y) in zip(self.channels[name]["x"], self.channels[name]["y"]):
                 if x >= oldest_time:
                     validx.append(x)
                     validy.append(y)
             # assign new data
-            self.channels[name]['x'] = validx
-            self.channels[name]['y'] = validy
-           
+            self.channels[name]["x"] = validx
+            self.channels[name]["y"] = validy
+
     def _remove_old_data(self):
         """Make sure old data is removed from datastore."""
         # get times that drop out
-        dropouts = self.times[self.MAX_MSGS:]
+        dropouts = self.times[self.MAX_MSGS :]
         # adjust times
-        self.times = self.times[:self.MAX_MSGS]
+        self.times = self.times[: self.MAX_MSGS]
         # make local copy of datastore
         datastore = self.data.copy()
         # loop over dropouts
@@ -128,14 +131,16 @@ class Painter:
             datastore.pop(dropout)
         # set new datastore
         self.data = datastore
-                
+
     def _draw(self):
         """Plot latest datapoints."""
         # loop over each channel and update plot
         for chn in self.channels.copy():
-            self.channels[chn]['line'].set_data(self.channels[chn]['x'], self.channels[chn]['y'])
+            self.channels[chn]["line"].set_data(
+                self.channels[chn]["x"], self.channels[chn]["y"]
+            )
             # has channel no content anymore?
-            if len(self.channels[chn]['x']) == 0:
+            if len(self.channels[chn]["x"]) == 0:
                 # remove channel
                 self._remove_channel(chn)
         # make sure limits are correct
@@ -146,28 +151,30 @@ class Painter:
         self.fig.canvas.flush_events()
         # print framerate
         self._get_framerate()
-        
+
     def _on_close_figure(self, evt):
         """Triggered when plot is closed by the user. End connection."""
         self.client.loop_stop()
-        
+
     def _add_channel(self, channel_):
         """Add new line to plot for a new channel"""
         self.channels[channel_] = {}
-        self.channels[channel_]['line'] = self.ax.plot([], [], '-', label=str(channel_))[0]
-        self.channels[channel_]['x'] = []
-        self.channels[channel_]['y'] = []
+        self.channels[channel_]["line"] = self.ax.plot(
+            [], [], "-", label=str(channel_)
+        )[0]
+        self.channels[channel_]["x"] = []
+        self.channels[channel_]["y"] = []
         self.ax.legend(loc=2)
-        
+
     def _remove_channel(self, channel_):
         """Remove channel if it runs out of scope / has no datapoints left."""
         # remove line from plot
-        self.ax.lines.remove(self.channels[channel_]['line'])
+        self.ax.lines.remove(self.channels[channel_]["line"])
         # remove channel from list of channels
         self.channels.pop(channel_)
         # refresh legend
         self.ax.legend(loc=2)
-        
+
     def _get_framerate(self):
         """Compute the current framerate (frames in the last second)"""
         # get current time
@@ -175,7 +182,11 @@ class Painter:
         # add current frame time
         self.frametimes.append(ts)
         # update frames list
-        self.frametimes = [frame for frame in self.frametimes if frame >= ts - datetime.timedelta(seconds=1)]
+        self.frametimes = [
+            frame
+            for frame in self.frametimes
+            if frame >= ts - datetime.timedelta(seconds=1)
+        ]
         # print result
         print("\rFPS:%i" % len(self.frametimes), end="")
 

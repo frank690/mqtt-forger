@@ -5,8 +5,8 @@ from transmitter.engine.technician import Technician
 from transmitter.engine.manager import Manager
 
 __all__ = [
-    'Painter',
-    'Generator',
-    'Technician',
-    'Manager',
+    "Painter",
+    "Generator",
+    "Technician",
+    "Manager",
 ]

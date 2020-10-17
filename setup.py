@@ -4,25 +4,27 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open('requirements.txt', 'r') as fh:
+with open("requirements.txt", "r") as fh:
     requirements = fh.read().splitlines()
 
-requirements = [req for req in requirements if not req.lower().startswith('pytest')]
+requirements = [req for req in requirements if not req.lower().startswith("pytest")]
 
 setuptools.setup(
-    name='mqtt-forger',
-    version='0.1.16',
+    name="mqtt-forger",
+    version="0.1.16",
     author="frank690",
     author_email="admin@sffresch.de",
     description="Dynamic mqtt message broker with lots of fakery and witchcraft!",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/frank690/mqtt-forger",
-    packages=setuptools.find_packages(exclude=['tests', 'tests.*', '*.tests.*', '*.tests', 'docs']),
+    packages=setuptools.find_packages(
+        exclude=["tests", "tests.*", "*.tests.*", "*.tests", "docs"]
+    ),
     include_package_data=True,
-    setup_requires=['cython'],
+    setup_requires=["cython"],
     install_requires=requirements,
-    test_suite='tests',
+    test_suite="tests",
     extras_require={
         "dev": [
             "pytest",
@@ -44,5 +46,5 @@ setuptools.setup(
         "Operating System :: Unix",
         "Operating System :: MacOS",
     ],
-    python_requires='>=3.7',
+    python_requires=">=3.7",
 )

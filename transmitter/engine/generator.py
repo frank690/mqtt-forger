@@ -20,17 +20,28 @@ class Generator:
     Class to compute current value of an initialized channel.
     """
 
-    def __init__(self, name_, frequency_=0.1, type_='sin', dead_frequency_=1,
-                 dead_period_=0, limits_=None, replay_data_=None, seed_=None):
+    def __init__(
+        self,
+        name_,
+        frequency_=0.1,
+        type_="sin",
+        dead_frequency_=1,
+        dead_period_=0,
+        limits_=None,
+        replay_data_=None,
+        seed_=None,
+    ):
         # init parameters for this instance
-        self.name = name_ # name of current channel
-        self.frequency = frequency_ # frequency in that the data will repeat itself
-        self.type = type_ # type of data generation. default is sin.
-        self.dead_frequency = dead_frequency_ # frequency in that the channels output will drop to zero
-        self.dead_period = dead_period_ # period (in seconds) of dead time
-        self.limits = limits_ # lower/upper limits of data
-        self.replay_data = replay_data_ # data to replay
-        self.seed = seed_ # random number seed
+        self.name = name_  # name of current channel
+        self.frequency = frequency_  # frequency in that the data will repeat itself
+        self.type = type_  # type of data generation. default is sin.
+        self.dead_frequency = (
+            dead_frequency_  # frequency in that the channels output will drop to zero
+        )
+        self.dead_period = dead_period_  # period (in seconds) of dead time
+        self.limits = limits_  # lower/upper limits of data
+        self.replay_data = replay_data_  # data to replay
+        self.seed = seed_  # random number seed
 
         # indexing for replay of data
         self.replay_idx = 0
@@ -41,98 +52,127 @@ class Generator:
         # set seed to noise?
         if self.seed:
             self._plant_a_seed()
-            
+
     def _check_input(self):
-        """ Check the given input data for type.
-        """
+        """Check the given input data for type."""
         # name_
         if not isinstance(self.name, str):
-            raise InvalidInputTypeError("Content of name_ is type %s but should be a of type string." %
-                                        type(self.name))
-            
+            raise InvalidInputTypeError(
+                "Content of name_ is type %s but should be a of type string."
+                % type(self.name)
+            )
+
         # frequency_
         if not isinstance(self.frequency, (int, float)):
-            raise InvalidInputTypeError("Content of frequency_ is type %s but should be a of type int or float." %
-                                        type(self.frequency))
+            raise InvalidInputTypeError(
+                "Content of frequency_ is type %s but should be a of type int or float."
+                % type(self.frequency)
+            )
         if self.frequency <= 0:
-            raise InvalidInputValueError("Value of frequency_ is negative (%s) but should be positive." %
-                                         str(self.frequency))
-        
+            raise InvalidInputValueError(
+                "Value of frequency_ is negative (%s) but should be positive."
+                % str(self.frequency)
+            )
+
         # type_
         if not isinstance(self.type, str):
-            raise InvalidInputTypeError("Content of type_ is type %s but should be a of type string." %
-                                        type(self.type))
+            raise InvalidInputTypeError(
+                "Content of type_ is type %s but should be a of type string."
+                % type(self.type)
+            )
         if self.type not in VALID_SIGNAL_TYPES:
-            raise InvalidInputValueError("Value of type_ (%s) is not valid." %
-                                         str(self.type))
-        
+            raise InvalidInputValueError(
+                "Value of type_ (%s) is not valid." % str(self.type)
+            )
+
         # dead_frequency_
         if not isinstance(self.dead_frequency, (int, float)):
-            raise InvalidInputTypeError("Content of dead_frequency_ is type %s but should be a of type int or float." %
-                                        type(self.dead_frequency))
+            raise InvalidInputTypeError(
+                "Content of dead_frequency_ is type %s but should be a of type int or float."
+                % type(self.dead_frequency)
+            )
         if self.dead_frequency <= 0:
-            raise InvalidInputValueError("Value of dead_frequency_ is negative (%s) but should be positive." %
-                                         str(self.dead_frequency))
-        
+            raise InvalidInputValueError(
+                "Value of dead_frequency_ is negative (%s) but should be positive."
+                % str(self.dead_frequency)
+            )
+
         # dead_period_
         if not isinstance(self.dead_period, (int, float)):
-            raise InvalidInputTypeError("Content of dead_period_ is type %s but should be a of type int or float." %
-                                        type(self.dead_period))
+            raise InvalidInputTypeError(
+                "Content of dead_period_ is type %s but should be a of type int or float."
+                % type(self.dead_period)
+            )
         if self.dead_period < 0:
-            raise InvalidInputValueError("Value of dead_period_ is negative (%s) but should be zero or positive." %
-                                         str(self.dead_period))
-        
+            raise InvalidInputValueError(
+                "Value of dead_period_ is negative (%s) but should be zero or positive."
+                % str(self.dead_period)
+            )
+
         # limits_
         if self.limits:
             if not isinstance(self.limits, list):
-                raise InvalidInputTypeError("Content of limits_ is type %s but should be a of type list." %
-                                            type(self.limits))
+                raise InvalidInputTypeError(
+                    "Content of limits_ is type %s but should be a of type list."
+                    % type(self.limits)
+                )
             if not all(isinstance(x, (int, float)) for x in self.limits):
-                raise InvalidInputValueError("Not all values of limits are of type int or float.")
-        
+                raise InvalidInputValueError(
+                    "Not all values of limits are of type int or float."
+                )
+
         # replay_data_
         if self.replay_data:
             if not isinstance(self.replay_data, list):
-                raise InvalidInputTypeError("Content of data_ is type %s but should be of type list." %
-                                            type(self.replay_data))
-        
+                raise InvalidInputTypeError(
+                    "Content of data_ is type %s but should be of type list."
+                    % type(self.replay_data)
+                )
+
         # seed_
         if self.seed:
             if not isinstance(self.seed, int):
-                raise InvalidInputTypeError("Content of seed_ is type %s but should be a of type int." %
-                                            type(self.seed))
-    
+                raise InvalidInputTypeError(
+                    "Content of seed_ is type %s but should be a of type int."
+                    % type(self.seed)
+                )
+
     def get_data(self, cdt_=None):
         """ Get the data including the noise."""
         # get times since start
         seconds = self._seconds_since_init(cdt_)
         # dead time currently active?
-        if seconds % (1/self.dead_frequency) < self.dead_period:
+        if seconds % (1 / self.dead_frequency) < self.dead_period:
             return 0
         else:
             # what data is generated?
-            if self.type == 'sin':
+            if self.type == "sin":
                 # get current position in radiant degree
-                x = 2 * np.pi * ((seconds % (1/self.frequency)) / (1/self.frequency))
+                x = (
+                    2
+                    * np.pi
+                    * ((seconds % (1 / self.frequency)) / (1 / self.frequency))
+                )
                 # compute y and rescale it
                 yr = np.sin(x)
-            elif self.type == 'random':
+            elif self.type == "random":
                 yr = np.random.rand()
-            elif self.type == 'fixed':
+            elif self.type == "fixed":
                 yr = 1
-            elif self.type == 'replay':
+            elif self.type == "replay":
                 # take sample
                 yr = self.replay_data[self.replay_idx]
                 self.replay_idx += 1
                 # reset replay idx
-                if self.replay_idx == len(self.replay_data): self.replay_idx = 0 
+                if self.replay_idx == len(self.replay_data):
+                    self.replay_idx = 0
             # do scaling if scale is given
             if self.limits:
                 # rescale and return data.
                 return self._rescale(yr)
             else:
                 return yr
-        
+
     def _seconds_since_init(self, cdt_=None):
         """ Get seconds since init of this class."""
         # no time given?
@@ -141,12 +181,12 @@ class Generator:
         # get time diff
         dt = cdt_ - self.basetime
         # get seconds since basetime
-        seconds = dt.seconds + dt.microseconds/1E6
+        seconds = dt.seconds + dt.microseconds / 1e6
         # return seconds since basetime and iso time
         return seconds
 
     def _rescale(self, value_):
-        """ Rescale value to new scale.
+        """Rescale value to new scale.
 
         Parameters:
         value_ (mandatory, float): Value to rescale.
@@ -158,10 +198,10 @@ class Generator:
         max = np.max(self.limits)
         min = np.min(self.limits)
         # rescale current value
-        value = ((max-min)/(1-(-1))) * (value_ - (-1)) + min
+        value = ((max - min) / (1 - (-1))) * (value_ - (-1)) + min
         # return rescaled value
         return value
-        
+
     def _plant_a_seed(self, seed_=None):
         """ Set (or reset) a seed to the random noise generator."""
         # seed given?
@@ -173,5 +213,7 @@ class Generator:
                 np.random.seed(self.seed)
             else:
                 # someone fucked up.
-                raise SeedReplantError("Replanting of seed is not possible, "
-                                       "since no seed has ever been planted before!")
+                raise SeedReplantError(
+                    "Replanting of seed is not possible, "
+                    "since no seed has ever been planted before!"
+                )
