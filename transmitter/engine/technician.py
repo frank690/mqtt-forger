@@ -1,3 +1,5 @@
+"""Use this module to compute the signals and create the payload for the mqtt pipeline"""
+
 # import own libs
 from transmitter.engine import Generator
 from transmitter.auxiliary.exceptions import (
@@ -7,19 +9,21 @@ from transmitter.auxiliary.exceptions import (
 
 # import native libs
 from datetime import datetime
+from typing import Dict, Optional
 import json
-
-"""Use this module to compute the signals and create the payload for the mqtt pipeline"""
 
 
 class Technician:
     """Class to manage multiple generator instances at once."""
 
-    def __init__(self, generators_):
+    def __init__(self, generators_: Optional[Dict] = None):
         """Pass the Technician a dict of all generators (and their ids) he needs to take care of."""
-        # store list locally
-        self.generators = generators_
-        # check input types
+
+        if generators_ is None:
+            self.generators = {}
+        else:
+            self.generators = generators_
+
         self._check_input()
 
     def _check_input(self):
@@ -63,11 +67,13 @@ class Technician:
         """ Extract the unique channel names since multiple generators can output on the same channel (name)."""
         return list(set([gen.name for key, gen in self.generators.items()]))
 
-    def get_payload(self):
-        """ Gather the data of all generators and pack it into a nice json."""
+    def get_payload(self) -> str:
+        """
+        Gather the data of all generators and pack it into a nice json.
+        :return: current payload.
+        """
         # get current time.
         time = datetime.now()
-        # transform to iso
         iso = time.isoformat()
         # create payload template
         data = {"timestamp": iso}
@@ -76,7 +82,4 @@ class Technician:
         # loop over each unique channel and gather data.
         for chn in chns:
             data[chn] = self._get_overall_output(chn, time)
-        # pack it into json
-        jdata = json.dumps(data)
-        # pass data
-        return jdata
+        return json.dumps(data)

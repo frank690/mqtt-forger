@@ -37,7 +37,7 @@ class Painter:
         self.ax.set_autoscaley_on(True)
         self.hfmt = mdates.DateFormatter(DISPLAY_DATE_FORMAT)
         self.ax.xaxis.set_major_formatter(self.hfmt)
-        self.ax.xaxis.set_major_locator(mdates.SecondLocator())
+        # self.ax.xaxis.set_major_locator(mdates.SecondLocator())
         self.ax.grid()
 
         # figure events
@@ -47,7 +47,6 @@ class Painter:
         self._draw()
 
         # client setup
-        self.data = {}
         self.client = mqtt.Client()
         self.client.on_connect = self._on_connect
         self.client.on_message = self._on_message
@@ -102,6 +101,8 @@ class Painter:
             # channel in current sample?
             if name in current_names:
                 # append new data to each channel
+                new_x = self.channels[name]["x"]
+                new_y = self.channels[name]["y"]
                 self.channels[name]["x"].append(current_time)
                 self.channels[name]["y"].append(sample[name])
 
@@ -114,23 +115,11 @@ class Painter:
                 if x >= oldest_time:
                     validx.append(x)
                     validy.append(y)
-            # assign new data
-            self.channels[name]["x"] = validx
-            self.channels[name]["y"] = validy
 
-    def _remove_old_data(self):
-        """Make sure old data is removed from datastore."""
-        # get times that drop out
-        dropouts = self.times[self.MAX_MSGS :]
-        # adjust times
-        self.times = self.times[: self.MAX_MSGS]
-        # make local copy of datastore
-        datastore = self.data.copy()
-        # loop over dropouts
-        for dropout in dropouts:
-            datastore.pop(dropout)
-        # set new datastore
-        self.data = datastore
+            # assign new data
+            self.channels[name].update(
+                x=validx, y=validy
+            )
 
     def _draw(self):
         """Plot latest datapoints."""
@@ -158,12 +147,12 @@ class Painter:
 
     def _add_channel(self, channel_):
         """Add new line to plot for a new channel"""
-        self.channels[channel_] = {}
-        self.channels[channel_]["line"] = self.ax.plot(
-            [], [], "-", label=str(channel_)
-        )[0]
-        self.channels[channel_]["x"] = []
-        self.channels[channel_]["y"] = []
+        self.channels[channel_] = dict(
+            line=self.ax.plot([], [], "-", label=str(channel_))[0],
+            x=[],
+            y=[]
+        )
+
         self.ax.legend(loc=2)
 
     def _remove_channel(self, channel_):
@@ -194,3 +183,21 @@ class Painter:
     def _datestr2num(str_):
         """Convert datestring to num"""
         return mdates.date2num(datetime.datetime.strptime(str_, DATE_FORMAT))
+
+
+if __name__ == '__main__':
+    # import class
+    from transmitter.engine import Manager
+
+    # init manager instance
+    man = Manager()
+
+    # create a new pipeline that will send data onto the mqtt topic 'foo' with 15 Hz.
+    pipe_id = man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15)
+
+    # attach a function to the just created pipeline that will produce a
+    # sin-wave with an lower bound of -1 and upper bound of 3.
+    # The sine wave will have an 0.5 Hz frequency.
+    channel_id = man.add_function(pipe_id, 'bar', [-1, 3], 0.5)
+    # init painter instance and listen to specific host ip, port and mqtt topic.
+    Painter('test.mosquitto.org', 1883, 'foo')
