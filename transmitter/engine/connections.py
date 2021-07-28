@@ -2,6 +2,7 @@
 
 __all__ = [
     "Connections",
+    "Connection",
 ]
 
 from typing import Tuple
@@ -20,6 +21,14 @@ class Connection:
         self.ip = ip
         self.port = port
 
+    def get_address(self) -> Tuple:
+        """
+        Get address information (ip and port).
+
+        :return: ip and port as tuple.
+        """
+        return self.ip, self.port
+
 
 class Connections:
     """
@@ -30,18 +39,16 @@ class Connections:
         """Initialize variables"""
         self.connections = {}
 
-    def add_connection(self, ip: str, port: int):
+    def add(self, ip: str, port: int) -> int:
         """
         Add new connection to dict of connections.
 
         :param ip: (mandatory, string) IP of target host.
         :param port: (mandatory, int) Port of target host.
+        :return: id of connection that has just been created.
         """
-        # get id of next connection
         cid = len(self.connections.keys())
-        # add connection to dict
-        self.connections[cid] = Connection(ip=ip, port=port)
-        # return the id that has just been added
+        self.connections[cid] = Connection(cid=cid, ip=ip, port=port)
         return cid
 
     def get_address(self, cid: int) -> Tuple:
@@ -51,4 +58,4 @@ class Connections:
         :param cid: (mandatory, int) id of connection.
         :return: ip and port as tuple.
         """
-        return self.connections[cid].ip, self.connections[cid].port
+        return self.connections[cid].get_address

@@ -2,10 +2,11 @@
 
 __all__ = [
     "Channels",
+    "Channel",
 ]
 
 from transmitter.auxiliary.constants import DEFAULT_PIPELINE_SETTINGS
-from typing import List
+from typing import List, Optional
 
 defaults = DEFAULT_PIPELINE_SETTINGS
 
@@ -40,8 +41,8 @@ class Channels:
         """
         self.channels = {}
 
-    def add_channel(self, name: str, limits: List, frequency: float, channel_type: str,
-                    dead_frequency: float, dead_period: float, replay_data: List) -> int:
+    def add(self, name: str, limits: List, frequency: float, channel_type: str,
+            dead_frequency: float, dead_period: float, replay_data: Optional[List] = None) -> Channel:
         """
         Add new channel to dict of channels.
 
@@ -52,7 +53,7 @@ class Channels:
         :param dead_frequency: (optional, float) Frequency in that the dead period will be applied again.
         :param dead_period: (optional, float) Time in seconds that the channel will not produce any data.
         :param replay_data: (optional, List) List of datapoints that will be replayed.
-        :return: id of channel that has just been added.
+        :return: Instance of Channel class that has just been added.
         """
         cid = 0 if len(self.channels.keys()) == 0 else max(self.channels.keys()) + 1
 
@@ -66,4 +67,12 @@ class Channels:
             replay_data=replay_data
         )
 
-        return cid
+        return self.channels[cid]
+
+    def remove(self, cid: int):
+        """
+        Remove channel with given channel id (cid).
+
+        :param cid: (mandatory, int) ID of channel to remove.
+        """
+        self.channels.pop(cid)

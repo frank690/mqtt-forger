@@ -1,7 +1,11 @@
 """Use this module to compute the signals and create the payload for the mqtt pipeline"""
 
+__all__ = [
+    "Technician",
+]
+
 # import own libs
-from transmitter.engine import Generator
+from transmitter.engine.generator import Generator
 from transmitter.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,
@@ -28,7 +32,6 @@ class Technician:
 
     def _check_input(self):
         """ Check the given input data for type."""
-        # generators_
         if not isinstance(self.generators, dict):
             raise InvalidInputTypeError(
                 "The parameter generators_ is type %s but should be a of type dict."
@@ -47,24 +50,21 @@ class Technician:
         :param name_: (Mandatory, string) Name of channel that the data should be extracted from.
         :param time_: (Optional, datetime) Timestamp that the data should be extracted from.
         """
-        # no time given?
         if not time_:
-            # get current time.
             time = datetime.now()
         else:
             time = time_
 
-        # loop over each generator and get each output.
-        each_y = [
-            gen.get_data(time)
-            for key, gen in self.generators.items()
-            if gen.name == name_
-        ]
-        # sum up each output and return it.
-        return sum(each_y)
+        return sum(
+            [
+                gen.get_data(time)
+                for key, gen in self.generators.items()
+                if gen.name == name_
+            ]
+        )
 
     def _get_unique_channels(self):
-        """ Extract the unique channel names since multiple generators can output on the same channel (name)."""
+        """Extract the unique channel names since multiple generators can output on the same channel (name)."""
         return list(set([gen.name for key, gen in self.generators.items()]))
 
     def get_payload(self) -> str:

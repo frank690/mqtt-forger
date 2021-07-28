@@ -16,12 +16,12 @@ from transmitter.engine import Manager
 man = Manager()
 
 # create a new pipeline that will send data onto the mqtt topic 'foo' with 15 Hz.
-pipe_id = man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15)
+pipeline = man.add_pipeline('test.mosquitto.org', 1883, 'foo', 15)
 
 # attach a function to the just created pipeline that will produce a 
 # sin-wave with an lower bound of -1 and upper bound of 3.
 # The sine wave will have an 0.5 Hz frequency.
-channel_id = man.add_function(pipe_id, 'bar', [-1, 3], 0.5)
+channel = pipeline.add_channel('bar', [-1, 3], 0.5)
 ~~~
 
 #### What is streamed.

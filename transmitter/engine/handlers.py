@@ -1,25 +1,63 @@
 """This module contains all Handlers classes that are used by the manager class."""
 
 __all__ = [
-    "Handlers",
+    "Handler",
 ]
 
 from transmitter.auxiliary.exceptions import OnConnectError
 from transmitter.engine.technician import Technician
 
 import paho.mqtt.client as mqtt
+from typing import Optional
 
 
 class Handler:
     """
-    Handlers class that is created by Handlers parent class.
+    Handlers class that has a technician instance for computing payloads and a mqtt client instance for sending data.
     """
-    def __init__(self, technician: Technician, mqtt_client: mqtt.Client):
+    def __init__(
+            self, topic: str, frequency: float, technician: Optional[Technician] = None,
+            mqtt_client: Optional[mqtt.Client] = None
+    ):
         """
         Initialize handler class.
+
+        :param topic: (mandatory, string) Name of topic that data should be published on.
+        :param frequency: (mandatory, float) Frequency (in Hz) in that the data will be published on the given topic.
+        :param technician: (mandatory, Technician) Instance of Technician class to use.
+        :param mqtt_client: (mandatory, mqtt.Client) Instance of mqtt client class to use.
         """
-        self.technician = technician
-        self.mqtt_client = mqtt_client
+
+        self.topic = topic
+        self.frequency = frequency
+
+        if technician is None:
+            self.technician = Technician()
+        else:
+            self.technician = technician
+
+        if mqtt_client is None:
+            self.mqtt_client = mqtt.Client()
+        else:
+            self.mqtt_client = mqtt_client
+
+    def check_connection(self, ip: str, port: int):
+        """
+        Try to establish a test connection on the given ip and port.
+        Raise error if attempt fails.
+
+        :param ip: (mandatory, str) IP to connect to.
+        :param port: (mandatory, int) Port to connect to.
+        """
+        try:
+            self.mqtt_client.connect(
+                ip, port, 60
+            )
+        except Exception as err:
+            raise OnConnectError(
+                "Failed to establish connection to %s:%i - %s"
+                % ip, port, err
+            )
 
     def get_payload(self) -> str:
         """
@@ -28,56 +66,20 @@ class Handler:
         """
         return self.technician.get_payload()
 
-    def publish(self, topic: str, jdata: str):
+    def publish(self):
         """
-        Publish given jdata on topic on mqtt client of this handler.
+        Publish data via mqtt client of this handler on topic that was set upon init of this class.
         """
-        self.mqtt_client.publish(topic=topic, payload=jdata)
+        self.mqtt_client.publish(topic=self.topic, payload=self.get_payload())
 
-
-class Handlers:
-    """
-    Handlers parent class that creates and keeps track of each handler child class.
-    """
-
-    def __init__(self):
-        """Initialize variables"""
-        self.handlers = {}
-
-    def add_handler(self, pid: int, connections):
+    def _remove_generator(self, pid_, cid_):
         """
-        Add new handler to dict of handlers.
+        Remove old generator and update list of corresponding technician.
 
-        :param pid: (mandatory, int) ID to assign to new handler.
+        :param pid: (mandatory, int) Pipeline id.
+        :param cid: (mandatory, int) Channel id.
         """
-        client = mqtt.Client()
-        try:
-            client.connect(
-                self.connections.get_address(cid=pid), 60
-            )
-        except Exception as err:
-            raise OnConnectError(
-                "Failed to establish connection to %s:%i - %s"
-                % self.connections.get_address(cid=pid), err
-            )
-
-        self.handlers[pid] = Handler(technician=Technician(), mqtt_client=client)
-
-    def get_payload(self, pid: int) -> str:
-        """
-        Get payload of technician of handler with given id (pid).
-
-        :param pid: (mandatory, int) ID of pipeline.
-        :return: payload data
-        """
-        return self.handlers[pid].get_payload()
-
-    def publish(self, pid: int, topic: str, jdata: str):
-        """
-        Publish given jdata of topic on handler with pid.
-
-        :param pid: (mandatory, int) ID of handler to use.
-        :param topic: (mandatory, str) Topic to publish data on.
-        :param jdata: (mandatory, str) JSON data to publish.
-        """
-        self.handlers[pid].publish(topic=topic, jdata=jdata)
+        # get corresponding technician
+        techie = self.handlers[pid_]["technician"]
+        # remove old generator from dict of generators
+        techie.generators.pop(cid_)
