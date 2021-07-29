@@ -6,14 +6,14 @@ from unittest import TestCase
 # import 3rd party libs
 import numpy as np
 
-from transmitter.auxiliary.exceptions import (
+from forger.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,
     SeedReplantError,
 )
-from transmitter.engine import Generator
+from forger.engine import Generator
 
-"""This module is executed by travis ci to test the transmitter.engine.generator"""
+"""This module is executed by travis ci to test the forger.engine.generator"""
 
 
 class TestBaseUnit(TestCase):

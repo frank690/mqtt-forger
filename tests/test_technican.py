@@ -3,15 +3,12 @@ import datetime
 import json
 from unittest import TestCase
 
-from transmitter.auxiliary.exceptions import (
-    InvalidInputTypeError,
-    InvalidInputValueError,
-)
+from forger.auxiliary.exceptions import InvalidInputTypeError, InvalidInputValueError
 
 # import own libs
-from transmitter.engine import Generator, Technician
+from forger.engine import Generator, Technician
 
-"""This module is used by travis ci to test the transmitter.engine.techician"""
+"""This module is used by travis ci to test the forger.engine.techician"""
 
 
 class TestBaseUnit(TestCase):

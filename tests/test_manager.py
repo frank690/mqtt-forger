@@ -1,20 +1,20 @@
 # import 3rd party libs
+# import native libs
+from unittest import TestCase
+
 import paho.mqtt.client as mqtt
 from apscheduler.job import Job
 
-# import own libs
-from transmitter.engine import Manager
-from transmitter.engine import Technician
-from transmitter.auxiliary.exceptions import (
+from forger.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,
     OnConnectError,
 )
 
-# import native libs
-from unittest import TestCase
+# import own libs
+from forger.engine import Manager, Technician
 
-"""This module is executed by the travis ci to test the transmitter.engine.manager"""
+"""This module is executed by the travis ci to test the forger.engine.manager"""
 
 # define some test variables
 ip = "test.mosquitto.org"
@@ -33,7 +33,7 @@ dead_period = 0
 
 
 class TestBaseUnit(TestCase):
-    """This class is used to test the transmitter.engine.manager"""
+    """This class is used to test the forger.engine.manager"""
 
     def test_value_output(self):
         """Test output of each function."""

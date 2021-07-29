@@ -7,9 +7,9 @@ from typing import List
 # import 3rd party libs
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from transmitter.auxiliary.constants import DEFAULT_PIPELINE_SETTINGS
-from transmitter.auxiliary.misc import get_new_id
-from transmitter.engine.pipelines import Pipeline
+from forger.auxiliary.constants import DEFAULT_PIPELINE_SETTINGS
+from forger.auxiliary.misc import get_new_id
+from forger.engine.pipelines import Pipeline
 
 
 class Manager:

@@ -8,7 +8,7 @@ from typing import Optional, Tuple
 
 import paho.mqtt.client as mqtt
 
-from transmitter.auxiliary.exceptions import OnConnectError
+from forger.auxiliary.exceptions import OnConnectError
 
 
 class Connection:

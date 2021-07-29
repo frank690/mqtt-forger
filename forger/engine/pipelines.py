@@ -8,9 +8,9 @@ from typing import List, Optional
 
 import apscheduler.schedulers.background
 
-from transmitter.auxiliary.constants import DEFAULT_PIPELINE_SETTINGS
-from transmitter.engine.channels import Channel, Channels
-from transmitter.engine.connections import Connection
+from forger.auxiliary.constants import DEFAULT_PIPELINE_SETTINGS
+from forger.engine.channels import Channel, Channels
+from forger.engine.connections import Connection
 
 defaults = DEFAULT_PIPELINE_SETTINGS
 

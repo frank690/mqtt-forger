@@ -3,14 +3,16 @@
 [![Coverage Status](https://coveralls.io/repos/github/frank690/mqtt-forger/badge.svg?branch=master)](https://coveralls.io/github/frank690/mqtt-forger?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/mqtt-forger/badge/?version=latest)](https://mqtt-forger.readthedocs.io/en/latest/?badge=latest)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
 Use this class to produce artificial data and publish it via mqtt to a specific host.
 
 
 #### How to start a simple data stream.
+
 ~~~py
 # import class
-from transmitter.engine import Manager
+from forger.engine import Manager
 
 # init manager instance
 man = Manager()
@@ -35,9 +37,10 @@ foo b'{"timestamp": "2019-08-28T09:39:00.816615", "bar": -0.5475520657645743}'
 ~~~
 
 #### How to visualize the data flow.
+
 ~~~py
 # import class
-from transmitter.engine import Painter
+from forger.engine import Painter
 
 # init painter instance and listen to specific host ip, port and mqtt topic.
 Painter('test.mosquitto.org', 1883, 'foo')

@@ -12,8 +12,8 @@ from typing import List, Optional
 import numpy as np
 
 # import own libs
-from transmitter.auxiliary.enums import ChannelTypes
-from transmitter.auxiliary.exceptions import InvalidInputTypeError, SeedReplantError
+from forger.auxiliary.enums import ChannelTypes
+from forger.auxiliary.exceptions import InvalidInputTypeError, SeedReplantError
 
 
 class Generator:

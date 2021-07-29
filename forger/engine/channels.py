@@ -9,8 +9,8 @@ import json
 from datetime import datetime
 from typing import List, Optional
 
-from transmitter.auxiliary.misc import get_new_id
-from transmitter.engine.generator import Generator
+from forger.auxiliary.misc import get_new_id
+from forger.engine.generator import Generator
 
 
 class Channel:

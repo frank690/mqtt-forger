@@ -6,4 +6,4 @@ __all__ = [
     "Manager",
 ]
 
-from transmitter.engine.manager import Manager
+from forger.engine.manager import Manager

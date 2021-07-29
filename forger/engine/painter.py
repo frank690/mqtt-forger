@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # import 3rd party libs
 import paho.mqtt.client as mqtt
 
-from transmitter.auxiliary.constants import (
+from forger.auxiliary.constants import (
     DATE_FORMAT,
     DISPLAY_DATE_FORMAT,
     MAX_DELAY,

@@ -1,4 +1,4 @@
-# used by transmitter.engine.manager
+# used by forger.engine.manager
 DEFAULT_PIPELINE_SETTINGS = {
     "channel_limits": None,
     "channel_frequency": 0.1,
@@ -9,7 +9,7 @@ DEFAULT_PIPELINE_SETTINGS = {
     "replay_data": None,
 }
 
-# used by transmitter.engine.painter
+# used by forger.engine.painter
 MAX_DELAY = 1 / (24 * 60 * 60)  # 1 second
 MEMORY = 5 / (24 * 60 * 60)  # 5 seconds
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
