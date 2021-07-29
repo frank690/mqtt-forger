@@ -6,13 +6,12 @@ import setuptools
 with open("CHANGELOG.md", "r") as fh:
     changelog = fh.read().splitlines()
 
-compiler = re.compile(pattern=r"^\s*version\s+\d+(\.\d+)*\s*$", flags=re.IGNORECASE)
-raw_changelog_version = list(filter(compiler.match, changelog))[0]
-changelog_version = re.sub(
-    pattern=r"^\s*version\s+",
-    repl="",
-    string=raw_changelog_version,
-    flags=re.IGNORECASE,
+raw_changelog_versions = [
+    re.search(pattern=r"^##\s+(\d+\.\d+\.\d+)", string=c, flags=re.IGNORECASE)
+    for c in changelog
+]
+changelog_version = [rcv for rcv in raw_changelog_versions if rcv is not None][0].group(
+    1
 )
 
 with open("README.md", "r") as fh:
