@@ -1,17 +1,15 @@
 # import native libs
-from unittest import TestCase
 import datetime
 import json
+from unittest import TestCase
 
-# import own libs
-from transmitter.engine import (
-    Generator,
-    Technician,
-)
 from transmitter.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,
 )
+
+# import own libs
+from transmitter.engine import Generator, Technician
 
 """This module is used by travis ci to test the transmitter.engine.techician"""
 
@@ -58,7 +56,7 @@ class TestBaseUnit(TestCase):
         self.assertEqual(unique_channels.sort(), ["Foo", "Bar"].sort())
 
         # _get_overall_output
-        bt_0 = generator_0.basetime
+        bt_0 = generator_0.base_time
         bt_01 = bt_0 + datetime.timedelta(seconds=0.25)
         self.assertTrue(techie._get_overall_output("Foo", time_=bt_01) == 15)
         self.assertTrue(techie._get_overall_output("Foo") <= 15)

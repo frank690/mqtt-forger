@@ -5,10 +5,11 @@ This module contains a collection of functions that are commonly used in the mqt
 __all__ = [
     "get_unique_name",
     "count_up",
+    "get_new_id",
 ]
 
-from typing import List
 from re import search as research
+from typing import List
 
 
 def get_unique_name(names: List[str], name: str) -> str:
@@ -16,7 +17,7 @@ def get_unique_name(names: List[str], name: str) -> str:
     Find a new name for name_ so that it is unique in the list of names_.
 
     :param names: (mandatory, list of strings) List of names that are already in use.
-    :param name: (mandatory, string) Name that should be unique to names.
+    :param name: Name that should be unique to names.
     :return: unique name
     """
     while name in names:
@@ -28,8 +29,8 @@ def count_up(name: str, suffix: str = "_") -> str:
     """
     Search for pattern in name_. Add that pattern if not found or add +1 to existing pattern.
 
-    :param name: (mandatory, string) Name that should be unique to names.
-    :param suffix: (optional, string) Will be attached to very end of name.
+    :param name: Name that should be unique to names.
+    :param suffix: Will be attached to very end of name.
     :return: modified name
     """
     # search for suffix and numbers at the very end of name.
@@ -39,5 +40,16 @@ def count_up(name: str, suffix: str = "_") -> str:
         # what number was found?
         num = int(search.group(0)[1:])
         # add +1 to that number.
-        return name[:-len(search.group(0))] + suffix + str(num + 1)
+        return name[: -len(search.group(0))] + suffix + str(num + 1)
     return name + suffix + "0"
+
+
+def get_new_id(dictionary: dict) -> int:
+    """
+    Get a new key id.
+    This task sounds rather trivial but if certain keys can be removed from a dictionary,
+    you may want to be sure that you are not overwriting existing ones while figuring out a new key id.
+    :param dictionary: current dictionary to determine new key for.
+    :return: New key that can be used without the hazard of overwriting an existing key.
+    """
+    return 0 if len(dictionary.keys()) == 0 else max(dictionary.keys()) + 1

@@ -16,12 +16,12 @@ from transmitter.engine import Manager
 man = Manager()
 
 # create a new pipeline that will send data onto the mqtt topic 'foo' with 15 Hz.
-pipeline = man.add_pipeline('test.mosquitto.org', 1883, 'foo', 15)
+pipeline = man.add_pipeline(ip='test.mosquitto.org', port=1883, topic='foo', frequency=15)
 
-# attach a function to the just created pipeline that will produce a 
+# attach a function/channel to the just created pipeline that will produce a 
 # sin-wave with an lower bound of -1 and upper bound of 3.
 # The sine wave will have an 0.5 Hz frequency.
-channel = pipeline.add_channel('bar', [-1, 3], 0.5)
+channel_1 = pipeline.add_channel(name='bar', limits=[-1, 3], frequency=0.5)
 ~~~
 
 #### What is streamed.
@@ -48,11 +48,11 @@ Painter('test.mosquitto.org', 1883, 'foo')
 #### Stack and/or add channels
 ~~~py
 # add noise to the already existing channel 'bar'
-noisy_id = man.add_function(pipe_id, 'bar', type_='random')
+noisy_channel = pipeline.add_channel(name='bar', channel_type='random')
 
 # add another sine-wave as a new channel 'baz'. 
 # this channel has a dead time of 1 second. occuring every 2 seconds.
-another_channel_id = man.add_function(pipe_id, 'baz', dead_frequency_=0.5, dead_period_=1)
+another_channel_id = pipeline.add_channel(name='baz', dead_frequency=0.5, dead_period=1)
 ~~~
 
 ![Multiple Channels](img/example_2.png)
@@ -65,8 +65,22 @@ import numpy as np
 # it is also possible to replay your own list of datapoints.
 data = [np.tanh(x) for x in np.linspace(-2, 2, 100)]
 
-# add new channel or combine channels.
-replay_channel_id = man.add_replay(pipe_id, data, 'tanh replay')
+# add another new channel 'qux' that replays the previously generated dataset.
+# it is a good habit to define a frequency so you know the speed at which your data will be streamed.
+replay_channel = pipeline.add_channel(name='qux', replay_data=data, frequency=0.1)
+~~~
+
+
+#### Remove one or all channels
+~~~py
+# either by still having the object itself (e.g. replay_channel from example above)
+pipeline.remove_channel(channel=replay_channel)
+
+# or by getting all channels that stream onto a certain name
+forgotten_channels = pipeline.get_channels(name="bar")  # this returns [channel_1, noisy_channel]
+
+# or just by removing all channels of a pipeline (topic)
+pipeline.remove_all_channels()
 ~~~
 
 #### What is left to do.

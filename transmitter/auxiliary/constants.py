@@ -1,14 +1,11 @@
-# used by transmitter.engine.generator
-VALID_SIGNAL_TYPES = ["sin", "random", "fixed", "replay"]
-
 # used by transmitter.engine.manager
 DEFAULT_PIPELINE_SETTINGS = {
     "channel_limits": None,
     "channel_frequency": 0.1,
     "channel_type": "sin",
     "pipeline_name": "Pipe",
-    "dead_frequency": 1,
-    "dead_period": 0,
+    "dead_frequency": 1.0,
+    "dead_period": 0.0,
     "replay_data": None,
 }
 

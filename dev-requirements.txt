@@ -1,0 +1,10 @@
+black
+pre-commit
+sphinx
+pytest
+pytest-cov
+pytest-mock
+docstr-coverage
+pylint
+flake8
+freezegun

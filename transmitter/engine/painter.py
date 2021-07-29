@@ -1,19 +1,20 @@
 # import from own libs
-from transmitter.auxiliary.constants import (
-    MAX_DELAY,
-    MEMORY,
-    DATE_FORMAT,
-    DISPLAY_DATE_FORMAT,
-)
-
-# import 3rd party libs
-import paho.mqtt.client as mqtt
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-
 # import native libs
 import datetime
 import json
+
+import matplotlib.dates as mdates
+import matplotlib.pyplot as plt
+
+# import 3rd party libs
+import paho.mqtt.client as mqtt
+
+from transmitter.auxiliary.constants import (
+    DATE_FORMAT,
+    DISPLAY_DATE_FORMAT,
+    MAX_DELAY,
+    MEMORY,
+)
 
 """Use this module to visualize what is going on with the data transmission"""
 
@@ -117,9 +118,7 @@ class Painter:
                     validy.append(y)
 
             # assign new data
-            self.channels[name].update(
-                x=validx, y=validy
-            )
+            self.channels[name].update(x=validx, y=validy)
 
     def _draw(self):
         """Plot latest datapoints."""
@@ -143,14 +142,13 @@ class Painter:
 
     def _on_close_figure(self, evt):
         """Triggered when plot is closed by the user. End connection."""
+        self.client.disconnect()
         self.client.loop_stop()
 
     def _add_channel(self, channel_):
         """Add new line to plot for a new channel"""
         self.channels[channel_] = dict(
-            line=self.ax.plot([], [], "-", label=str(channel_))[0],
-            x=[],
-            y=[]
+            line=self.ax.plot([], [], "-", label=str(channel_))[0], x=[], y=[]
         )
 
         self.ax.legend(loc=2)
@@ -183,21 +181,3 @@ class Painter:
     def _datestr2num(str_):
         """Convert datestring to num"""
         return mdates.date2num(datetime.datetime.strptime(str_, DATE_FORMAT))
-
-
-if __name__ == '__main__':
-    # import class
-    from transmitter.engine import Manager
-
-    # init manager instance
-    man = Manager()
-
-    # create a new pipeline that will send data onto the mqtt topic 'foo' with 15 Hz.
-    pipe_id = man.create_pipeline('test.mosquitto.org', 1883, 'foo', 15)
-
-    # attach a function to the just created pipeline that will produce a
-    # sin-wave with an lower bound of -1 and upper bound of 3.
-    # The sine wave will have an 0.5 Hz frequency.
-    channel_id = man.add_function(pipe_id, 'bar', [-1, 3], 0.5)
-    # init painter instance and listen to specific host ip, port and mqtt topic.
-    Painter('test.mosquitto.org', 1883, 'foo')

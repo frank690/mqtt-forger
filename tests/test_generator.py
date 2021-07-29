@@ -1,17 +1,17 @@
 # import own libs
-from transmitter.engine import Generator
+# import native libs
+import datetime
+from unittest import TestCase
+
+# import 3rd party libs
+import numpy as np
+
 from transmitter.auxiliary.exceptions import (
     InvalidInputTypeError,
     InvalidInputValueError,
     SeedReplantError,
 )
-
-# import 3rd party libs
-import numpy as np
-from unittest import TestCase
-
-# import native libs
-import datetime
+from transmitter.engine import Generator
 
 """This module is executed by travis ci to test the transmitter.engine.generator"""
 
@@ -61,7 +61,7 @@ class TestBaseUnit(TestCase):
         generator._plant_a_seed()
 
         # _seconds_since_init
-        seconds = generator._seconds_since_init(generator.basetime)
+        seconds = generator._seconds_since_init(generator.base_time)
         self.assertTrue(seconds == 0)
         seconds = generator._seconds_since_init()
         self.assertTrue(seconds > 0)
@@ -73,21 +73,21 @@ class TestBaseUnit(TestCase):
         self.assertTrue(max_rescaled == 15)
 
         # get_data
-        self.assertTrue(generator.get_data(generator.basetime) == 0)
+        self.assertTrue(generator.get_data(generator.base_time) == 0)
         self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.25))
+            generator.get_data(generator.base_time + datetime.timedelta(seconds=0.25))
             >= 14.99999999
         )
         self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5))
+            generator.get_data(generator.base_time + datetime.timedelta(seconds=0.5))
             <= 0.0000001
         )
         self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5))
+            generator.get_data(generator.base_time + datetime.timedelta(seconds=0.5))
             >= -0.0000001
         )
         self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.75))
+            generator.get_data(generator.base_time + datetime.timedelta(seconds=0.75))
             <= -14.99999999
         )
 
@@ -102,7 +102,7 @@ class TestBaseUnit(TestCase):
             seed_=42,
         )
         generator._plant_a_seed(123)
-        self.assertTrue(generator.get_data(generator.basetime) >= 14.99999999)
+        self.assertTrue(generator.get_data(generator.base_time) >= 14.99999999)
 
     def test_invalid_inputs(self):
         """Test for all expected errors that should be raised when given invalid inputs"""
