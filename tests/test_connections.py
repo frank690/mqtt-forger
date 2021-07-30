@@ -31,7 +31,7 @@ class TestConnection:
             ("127.0.0.1", 1234),
         ],
     )
-    def test_check_connection(self, ip, port):
+    def test_get_address(self, ip, port):
         """
         Test the get_address method
         """

@@ -4,7 +4,7 @@ __all__ = [
     "Connection",
 ]
 
-from typing import Optional, Tuple
+from typing import Tuple
 
 import paho.mqtt.client as mqtt
 

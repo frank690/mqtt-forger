@@ -8,6 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - uses: PyCQA/isort@stable
+      - uses: PyCQA/isort@5.9.3
         with:
           args: ". --check --profile black"
