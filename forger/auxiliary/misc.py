@@ -14,7 +14,7 @@ from typing import List
 
 def get_unique_name(names: List[str], name: str) -> str:
     """
-    Find a new name for name_ so that it is unique in the list of names_.
+    Find a new name for name so that it is unique in the list of names.
 
     :param names: (mandatory, list of strings) List of names that are already in use.
     :param name: Name that should be unique to names.
@@ -27,7 +27,7 @@ def get_unique_name(names: List[str], name: str) -> str:
 
 def count_up(name: str, suffix: str = "_") -> str:
     """
-    Search for pattern in name_. Add that pattern if not found or add +1 to existing pattern.
+    Search for pattern in name. Add that pattern if not found or add +1 to existing pattern.
 
     :param name: Name that should be unique to names.
     :param suffix: Will be attached to very end of name.
@@ -47,6 +47,7 @@ def count_up(name: str, suffix: str = "_") -> str:
 def get_new_id(dictionary: dict) -> int:
     """
     Get a new key id.
+    It is assumed that the given dictionary only has integers as keys.
     This task sounds rather trivial but if certain keys can be removed from a dictionary,
     you may want to be sure that you are not overwriting existing ones while figuring out a new key id.
     :param dictionary: current dictionary to determine new key for.
