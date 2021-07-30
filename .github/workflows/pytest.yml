@@ -30,4 +30,4 @@ jobs:
                --junitxml=unit_test_reports/junit.xml \
                --cov-report term \
                --cov-report html:unit_test_reports/coverage \
-               --cov=medform
+               --cov=forger

@@ -16,20 +16,16 @@ class Connection:
     Connection class that is created by Connections class.
     """
 
-    def __init__(self, ip: str, port: int, mqtt_client: Optional[mqtt.Client] = None):
-        """Initialize new connection.
+    def __init__(self, ip: str, port: int):
+        """
+        Initialize new connection.
 
         :param ip: IP of target host.
         :param port: Port of target host.
-        :param mqtt_client: Instance of mqtt client class to use.
         """
         self.ip = ip
         self.port = port
-
-        if mqtt_client is None:
-            self.mqtt_client = mqtt.Client()
-        else:
-            self.mqtt_client = mqtt_client
+        self.mqtt_client = mqtt.Client()
 
         self.check_connection()
 
@@ -42,7 +38,8 @@ class Connection:
             self.mqtt_client.connect(self.ip, self.port, 60)
         except Exception as err:
             raise OnConnectError(
-                "Failed to establish connection to %s:%i - %s" % self.ip, self.port, err
+                "Failed to establish connection to %s:%i - %s"
+                % (self.ip, self.port, err)
             )
 
     def get_address(self) -> Tuple:
