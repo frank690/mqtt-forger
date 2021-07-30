@@ -23,7 +23,7 @@ jobs:
     - name: Install mosquitto
       run: |
         sudo apt-get install mosquitto -y
-        mosquitto
+        mosquitto -p 1234
     - name: Test with pytest
       run: |
         python -m pytest \
