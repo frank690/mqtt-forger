@@ -10,4 +10,4 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: PyCQA/isort@stable
         with:
-          args: ". -c"
+          args: ". --check --profile black"
