@@ -7,7 +7,7 @@ __all__ = [
 
 import json
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from forger.auxiliary.misc import get_new_id
 from forger.engine.generator import Generator
@@ -21,7 +21,7 @@ class Channel:
     def __init__(
         self,
         name: str,
-        limits: List,
+        scale: List[Union[float, int]],
         frequency: float,
         channel_type: str,
         dead_frequency: float,
@@ -32,7 +32,7 @@ class Channel:
         Initialize variables
         """
         self.name = name
-        self.limits = limits
+        self.scale = scale
         self.frequency = frequency
         self.channel_type = channel_type
         self.dead_frequency = dead_frequency
@@ -41,7 +41,7 @@ class Channel:
 
         self.generator = Generator(
             name=name,
-            limits=limits,
+            scale=scale,
             frequency=frequency,
             channel_type=channel_type,
             dead_frequency=dead_frequency,
@@ -64,7 +64,7 @@ class Channels:
     def add(
         self,
         name: str,
-        limits: Optional[List],
+        scale: Optional[List],
         frequency: float,
         channel_type: str,
         dead_frequency: float,
@@ -75,7 +75,7 @@ class Channels:
         Add new channel to dict of channels.
 
         :param name: Name of the new channel.
-        :param limits: The lower/upper limits of the data.
+        :param scale: The lower/upper scale that the data should be rescaled to.
         :param frequency: Frequency (in Hertz) in that the data will repeat itself.
         :param channel_type: Type of channel (e.g. sin, cos, ...).
         :param dead_frequency: Frequency in that the dead period will be applied again.
@@ -87,7 +87,7 @@ class Channels:
 
         self.channels[cid] = Channel(
             name=name,
-            limits=limits,
+            scale=scale,
             frequency=frequency,
             channel_type=channel_type,
             dead_frequency=dead_frequency,

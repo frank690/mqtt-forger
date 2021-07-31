@@ -76,5 +76,5 @@ if __name__ == "__main__":
     # attach a function/channel to the just created pipeline that will produce a
     # sin-wave with an lower bound of -1 and upper bound of 3.
     # The sine wave will have an 0.5 Hz frequency.
-    channel_1 = pipeline.add_channel(name="bar", limits=[-1, 3], frequency=0.5)
+    channel_1 = pipeline.add_channel(name="bar", scale=[-1, 3], frequency=0.5)
     a = 1

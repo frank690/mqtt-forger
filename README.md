@@ -23,7 +23,7 @@ pipeline = man.add_pipeline(ip='test.mosquitto.org', port=1883, topic='foo', fre
 # attach a function/channel to the just created pipeline that will produce a 
 # sin-wave with an lower bound of -1 and upper bound of 3.
 # The sine wave will have an 0.5 Hz frequency.
-channel_1 = pipeline.add_channel(name='bar', limits=[-1, 3], frequency=0.5)
+channel_1 = pipeline.add_channel(name='bar', scale=[-1, 3], frequency=0.5)
 ~~~
 
 #### What is streamed.
@@ -70,6 +70,7 @@ data = [np.tanh(x) for x in np.linspace(-2, 2, 100)]
 
 # add another new channel 'qux' that replays the previously generated dataset.
 # it is a good habit to define a frequency so you know the speed at which your data will be streamed.
+# also note that scaling is turned off for channels with replay data (but not for interfering channels!).
 replay_channel = pipeline.add_channel(name='qux', replay_data=data, frequency=0.1)
 ~~~
 

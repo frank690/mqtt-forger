@@ -1,4 +1,4 @@
-name: Isort
+name: Black
 
 on: [push]
 
@@ -8,6 +8,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+      - uses: psf/black@stable
+        with:
+          args: ". --check"
       - uses: PyCQA/isort@5.9.3
         with:
           args: ". --check --profile black"

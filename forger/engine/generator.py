@@ -28,7 +28,7 @@ class Generator:
         channel_type: str,
         dead_frequency: float,
         dead_period: float,
-        limits: Optional[List],
+        scale: Optional[List],
         replay_data: Optional[List],
         seed: Optional[int] = None,
     ):
@@ -46,16 +46,20 @@ class Generator:
             dead_frequency  # frequency in that the channels output will drop to zero
         )
         self.dead_period = dead_period  # period (in seconds) of dead time
-        self.limits = limits  # lower/upper limits of data
+        self.scale = scale  # desired lower/upper limits of data
+        self.limits = [-1, 1]
         self.replay_data = replay_data  # data to replay
-        self.seed = seed  # random number seed
 
         # indexing for replay of data
         self.replay_idx = 0
         self.base_time = datetime.now()
+        self.seed = np.abs(seed) if seed is not None else None
 
         if self.seed:
             self._plant_a_seed()
+
+        if self.replay_data:
+            self.limits = [np.min(self.replay_data), np.max(self.replay_data)]
 
     def get_data(self, current_datetime: Optional[datetime] = None):
         """
@@ -68,7 +72,7 @@ class Generator:
         if (self.dead_frequency != 0) and (
             seconds % (1 / self.dead_frequency) < self.dead_period
         ):
-            return 0
+            return 0.0
         else:
             if self.channel_type in ChannelTypes.SIN.value:
                 # get current position in radiant degree
@@ -81,7 +85,7 @@ class Generator:
             elif self.channel_type in ChannelTypes.RANDOM.value:
                 yr = np.random.rand()
             elif self.channel_type in ChannelTypes.FIXED.value:
-                yr = 1
+                yr = 1.0
             elif self.channel_type in ChannelTypes.REPLAY.value:
                 # take sample
                 yr = self.replay_data[self.replay_idx]
@@ -94,7 +98,7 @@ class Generator:
                     f"Given channel_type ({self.channel_type}) is not implemented."
                 )
 
-            if self.limits:
+            if self.scale:
                 return self._rescale(yr)
             else:
                 return yr
@@ -123,18 +127,23 @@ class Generator:
         Note:
         - It is assumed that unscaled data is between [-1, 1]
         """
-        max_value = np.max(self.limits)
-        min_value = np.min(self.limits)
-        return ((max_value - min_value) / (1 - (-1))) * (value - (-1)) + min_value
+        max_scale = np.max(self.scale)
+        min_scale = np.min(self.scale)
+        max_limit = np.max(self.limits)
+        min_limit = np.min(self.limits)
+
+        return ((max_scale - min_scale) / (max_limit - min_limit)) * (
+            value - min_limit
+        ) + min_scale
 
     def _plant_a_seed(self, seed: Optional[int] = None):
         """
         Set (or reset) a seed to the random noise generator.
-
+        Note that if negative integer is passed as seed, its absolute value is used.
         :param seed: Seed to use for random generators.
         """
         if seed:
-            np.random.seed(seed)
+            np.random.seed(np.abs(seed))
         else:
             if self.seed:
                 np.random.seed(self.seed)

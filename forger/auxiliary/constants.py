@@ -1,6 +1,6 @@
 # used by forger.engine.manager
 DEFAULT_PIPELINE_SETTINGS = {
-    "channel_limits": None,
+    "channel_scale": None,
     "channel_frequency": 0.1,
     "channel_type": "sin",
     "pipeline_name": "Pipe",

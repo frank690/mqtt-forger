@@ -61,7 +61,7 @@ class Pipeline:
     def add_channel(
         self,
         name: str,
-        limits: Optional[List] = defaults["channel_limits"],
+        scale: Optional[List] = defaults["channel_scale"],
         frequency: Optional[float] = defaults["channel_frequency"],
         channel_type: Optional[str] = defaults["channel_type"],
         dead_frequency: Optional[float] = defaults["dead_frequency"],
@@ -72,7 +72,7 @@ class Pipeline:
         Call Channels class to create a new Channel class instance.
 
         :param name: Name of the new channel.
-        :param limits: (optional, list of floats) The lower/upper limits of the data.
+        :param scale: The desired lower/upper limits of the data.
         :param frequency: Frequency (in Hertz) in that the data will repeat itself.
         :param channel_type: Type of channel (e.g. sin, cos, ...).
         :param dead_frequency: Frequency in that the dead period will be applied again.
@@ -82,7 +82,7 @@ class Pipeline:
         """
         channel = self.channels.add(
             name=name,
-            limits=limits,
+            scale=scale,
             frequency=frequency,
             channel_type=channel_type,
             dead_frequency=dead_frequency,
