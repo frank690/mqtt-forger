@@ -11,6 +11,3 @@ jobs:
       - uses: psf/black@stable
         with:
           args: ". --check"
-      - uses: PyCQA/isort@5.9.3
-        with:
-          args: ". --check --profile black"

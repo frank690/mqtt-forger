@@ -8,7 +8,7 @@ import pytest
 from forger.auxiliary.exceptions import InvalidInputTypeError, SeedReplantError
 from forger.engine.generator import Generator
 
-data = [5 * np.tanh(x) for x in np.linspace(-2, 2, 100)]
+data = [5 * np.tanh(x) for x in np.linspace(-2, 2, 10)]
 
 
 @pytest.fixture(
@@ -29,6 +29,7 @@ data = [5 * np.tanh(x) for x in np.linspace(-2, 2, 100)]
         ("Qux", 10.5, "rnd", 2, 0.5, [-10, 5], None, 3),
         ("Qux", 0.15, "fixed", 3, 0.2, [12.5, 14.81], None, 42),
         ("Qux", 0.015, "replay", 4, 0.1, None, data, 1337),
+        ("Fail", 0.015, "wrong", 0, 0, None, None, 1337),
     ],
 )
 def generator(request):
@@ -103,6 +104,65 @@ class TestGenerator:
         "dt",
         [
             datetime.now(),
+            datetime(
+                year=2020,
+                month=7,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2000,
+                month=7,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2021,
+                month=7,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            None,
+            datetime(
+                year=2020,
+                month=1,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2020,
+                month=2,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2020,
+                month=3,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2020, month=7, day=10, hour=1, minute=0, second=0, microsecond=0
+            ),
+            None,
             None,
         ],
     )
@@ -110,5 +170,9 @@ class TestGenerator:
         """
         Test the get_data method
         """
-        value = generator.get_data(current_datetime=dt)
-        assert isinstance(value, float)
+        if generator.channel_type == "wrong":
+            with pytest.raises(InvalidInputTypeError):
+                generator.get_data(current_datetime=dt)
+        else:
+            value = generator.get_data(current_datetime=dt)
+            assert isinstance(value, float)

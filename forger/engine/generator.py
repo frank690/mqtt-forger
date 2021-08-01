@@ -59,6 +59,7 @@ class Generator:
             self._plant_a_seed()
 
         if self.replay_data:
+            self.channel_type = ChannelTypes.RANDOM.value[0]
             self.limits = [np.min(self.replay_data), np.max(self.replay_data)]
 
     def get_data(self, current_datetime: Optional[datetime] = None):
