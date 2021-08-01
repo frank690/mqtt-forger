@@ -1,4 +1,4 @@
-"""This module is used to test the functions in  forger.auxiliary.misc"""
+"""This module is used to test the functions in forger.auxiliary.misc"""
 
 import pytest
 

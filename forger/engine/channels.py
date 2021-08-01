@@ -26,7 +26,8 @@ class Channel:
         channel_type: str,
         dead_frequency: float,
         dead_period: float,
-        replay_data: List,
+        replay_data: Optional[List],
+        seed: Optional[int],
     ):
         """
         Initialize variables
@@ -38,6 +39,7 @@ class Channel:
         self.dead_frequency = dead_frequency
         self.dead_period = dead_period
         self.replay_data = replay_data
+        self.seed = seed
 
         self.generator = Generator(
             name=name,
@@ -47,6 +49,7 @@ class Channel:
             dead_frequency=dead_frequency,
             dead_period=dead_period,
             replay_data=replay_data,
+            seed=seed,
         )
 
 
@@ -70,6 +73,7 @@ class Channels:
         dead_frequency: float,
         dead_period: float,
         replay_data: Optional[List],
+        seed: Optional[int],
     ) -> Channel:
         """
         Add new channel to dict of channels.
@@ -81,6 +85,7 @@ class Channels:
         :param dead_frequency: Frequency in that the dead period will be applied again.
         :param dead_period: Time in seconds that the channel will not produce any data.
         :param replay_data: List of data points that will be replayed.
+        :param seed: Integer to set as seed so random values are reproducible.
         :return: Instance of Channel class that has just been added.
         """
         cid = get_new_id(self.channels)
@@ -93,6 +98,7 @@ class Channels:
             dead_frequency=dead_frequency,
             dead_period=dead_period,
             replay_data=replay_data,
+            seed=seed,
         )
 
         return self.channels[cid]

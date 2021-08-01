@@ -67,6 +67,7 @@ class Pipeline:
         dead_frequency: Optional[float] = defaults["dead_frequency"],
         dead_period: Optional[float] = defaults["dead_period"],
         replay_data: Optional[List] = defaults["replay_data"],
+        seed: Optional[int] = defaults["seed"],
     ) -> Channel:
         """
         Call Channels class to create a new Channel class instance.
@@ -78,6 +79,7 @@ class Pipeline:
         :param dead_frequency: Frequency in that the dead period will be applied again.
         :param dead_period: Time in seconds that the channel will not produce any data.
         :param replay_data: List of data points that will be replayed.
+        :param seed: Integer to set as seed so random values are reproducible.
         :return: Instance of Channel class that has just been added.
         """
         channel = self.channels.add(
@@ -88,6 +90,7 @@ class Pipeline:
             dead_frequency=dead_frequency,
             dead_period=dead_period,
             replay_data=replay_data,
+            seed=seed,
         )
 
         return channel

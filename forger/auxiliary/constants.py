@@ -7,6 +7,7 @@ DEFAULT_PIPELINE_SETTINGS = {
     "dead_frequency": 1.0,
     "dead_period": 0.0,
     "replay_data": None,
+    "seed": None,
 }
 
 # used by forger.engine.painter

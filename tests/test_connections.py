@@ -1,4 +1,4 @@
-"""This module is used to test the functions in  forger.engine.connections"""
+"""This module is used to test the classes in forger.engine.connections"""
 
 import pytest
 

@@ -1,36 +1,16 @@
-"""This module is used to test the functions in  forger.engine.generator"""
+"""This module is used to test the classes in forger.engine.generator"""
 
 from datetime import datetime
 
-import numpy as np
 import pytest
 
 from forger.auxiliary.exceptions import InvalidInputTypeError, SeedReplantError
 from forger.engine.generator import Generator
-
-data = [5 * np.tanh(x) for x in np.linspace(-2, 2, 10)]
+from tests.conftest import generator_samples
 
 
 @pytest.fixture(
-    params=[
-        ("Foo", 1, "sin", 0, 0, None, None, None),
-        ("Foo", 10.5, "rnd", 0, 0, None, None, None),
-        ("Foo", 0.15, "fixed", 0, 0, None, None, None),
-        ("Foo", 0.015, "replay", 0, 0, None, data, None),
-        ("Bar", 1, "sin", 1, 1, None, None, None),
-        ("Bar", 10.5, "rnd", 2, 0.5, None, None, None),
-        ("Bar", 0.15, "fixed", 3, 0.2, None, None, None),
-        ("Bar", 0.015, "replay", 4, 0.1, None, data, None),
-        ("Baz", 1, "sin", 0, 0, [42, 1337], None, None),
-        ("Baz", 10.5, "rnd", 0, 0, [-0.24, 0.99], None, None),
-        ("Baz", 0.15, "fixed", 0, 0, [-8, -4], None, None),
-        ("Baz", 0.015, "replay", 0, 0, [1, 2], data, None),
-        ("Qux", 1, "sin", 1, 1, [0.1, 0.11], None, 2),
-        ("Qux", 10.5, "rnd", 2, 0.5, [-10, 5], None, 3),
-        ("Qux", 0.15, "fixed", 3, 0.2, [12.5, 14.81], None, 42),
-        ("Qux", 0.015, "replay", 4, 0.1, None, data, 1337),
-        ("Fail", 0.015, "wrong", 0, 0, None, None, 1337),
-    ],
+    params=generator_samples,
 )
 def generator(request):
     return Generator(
