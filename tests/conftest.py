@@ -3,7 +3,8 @@
 import numpy as np
 
 sample_replay_data = [5 * np.tanh(x) for x in np.linspace(-2, 2, 10)]
-generator_samples = [
+
+valid_generator_samples = [
     ("Foo", 1, "sin", 0, 0, None, None, None),
     ("Foo", 10.5, "rnd", 0, 0, None, None, None),
     ("Foo", 0.15, "fixed", 0, 0, None, None, None),
@@ -20,5 +21,18 @@ generator_samples = [
     ("Qux", 10.5, "rnd", 2, 0.5, [-10, 5], None, 3),
     ("Qux", 0.15, "fixed", 3, 0.2, [12.5, 14.81], None, 42),
     ("Qux", 0.015, "replay", 4, 0.1, None, sample_replay_data, 1337),
+]
+
+invalid_generator_samples = [
     ("Fail", 0.015, "wrong", 0, 0, None, None, 1337),
 ]
+
+generator_samples = valid_generator_samples + invalid_generator_samples
+
+valid_generator_samples_names = ["Foo", "Bar", "Baz", "Qux"]
+
+invalid_generator_samples_names = ["Fail"]
+
+generator_samples_names = (
+    valid_generator_samples_names + invalid_generator_samples_names
+)

@@ -1,10 +1,18 @@
 """This module is used to test the classes in forger.engine.channels"""
 
+import json
+from datetime import datetime
+
 import pytest
 
 from forger.engine.channels import Channel, Channels
 from forger.engine.generator import Generator
-from tests.conftest import generator_samples
+from tests.conftest import (
+    generator_samples,
+    generator_samples_names,
+    valid_generator_samples,
+    valid_generator_samples_names,
+)
 
 
 class TestChannel:
@@ -44,6 +52,22 @@ class TestChannel:
 @pytest.fixture()
 def channels():
     return Channels()
+
+
+@pytest.fixture()
+def valid_channels(channels):
+    for generator_sample in valid_generator_samples:
+        channels.add(
+            name=generator_sample[0],
+            frequency=generator_sample[1],
+            channel_type=generator_sample[2],
+            dead_frequency=generator_sample[3],
+            dead_period=generator_sample[4],
+            scale=generator_sample[5],
+            replay_data=generator_sample[6],
+            seed=42,
+        )
+    return channels
 
 
 class TestChannels:
@@ -121,4 +145,42 @@ class TestChannels:
                 seed=generator_sample[7],
             )
 
-        assert list(set(names)) == channels._get_unique_channels()
+        assert set(generator_samples_names) == set(channels._get_unique_channels())
+
+    @pytest.mark.parametrize(
+        "name,dt",
+        [
+            ("Foo", None),
+            ("Foo", datetime.now()),
+            ("Bar", None),
+            (
+                "Bar",
+                datetime(
+                    year=2003,
+                    month=11,
+                    day=4,
+                    hour=8,
+                    minute=44,
+                    second=1,
+                    microsecond=432,
+                ),
+            ),
+        ],
+    )
+    def test__get_overall_output(self, valid_channels, name, dt):
+        """
+        Test the _get_overall_output method of Channels class.
+        """
+        foo_output = valid_channels._get_overall_output(name=name, time=dt)
+        assert isinstance(foo_output, float)
+
+    def test_get_payload(self, valid_channels):
+        """
+        Test the get_payload method of Channels class.
+        """
+        payload = valid_channels.get_payload()
+        payload_dict = json.loads(payload)
+
+        assert isinstance(payload, str)
+        for valid_generator_samples_name in valid_generator_samples_names:
+            assert valid_generator_samples_name in payload_dict
