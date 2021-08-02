@@ -32,6 +32,8 @@ jobs:
                --cov-report html:unit_test_reports/coverage \
                --cov=forger
     - name: Coveralls
+      env:
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
         coverage run --source=forger -m pytest tests
-        COVERALLS_REPO_TOKEN=${{ secrets.SECRET_KEY }} coveralls
+        coveralls
