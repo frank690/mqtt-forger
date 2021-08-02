@@ -59,7 +59,7 @@ class Generator:
             self._plant_a_seed()
 
         if self.replay_data:
-            self.channel_type = ChannelTypes.RANDOM.value[0]
+            self.channel_type = ChannelTypes.REPLAY.value[0]
             self.limits = [np.min(self.replay_data), np.max(self.replay_data)]
 
     def get_data(self, current_datetime: Optional[datetime] = None):
@@ -88,12 +88,8 @@ class Generator:
             elif self.channel_type in ChannelTypes.FIXED.value:
                 yr = 1.0
             elif self.channel_type in ChannelTypes.REPLAY.value:
-                # take sample
-                yr = self.replay_data[self.replay_idx]
+                yr = self.replay_data[self.replay_idx % len(self.replay_data)]
                 self.replay_idx += 1
-                # reset replay idx
-                if self.replay_idx == len(self.replay_data):
-                    self.replay_idx = 0
             else:
                 raise InvalidInputTypeError(
                     f"Given channel_type ({self.channel_type}) is not implemented."

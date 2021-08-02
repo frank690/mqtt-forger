@@ -9,7 +9,9 @@ from tests.conftest import pipeline_samples, pipeline_samples_names
 
 @pytest.fixture()
 def manager():
-    return Manager()
+    man = Manager()
+    man.Scheduler.pause()
+    return man
 
 
 @pytest.fixture()

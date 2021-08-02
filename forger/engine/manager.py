@@ -58,17 +58,3 @@ class Manager:
         :return: List of names (strings) of pipelines.
         """
         return [v.name for k, v in self.pipelines.items()]
-
-
-if __name__ == "__main__":
-    # init manager instance
-    man = Manager()
-
-    # create a new pipeline that will send data onto the mqtt topic 'foo' with 15 Hz.
-    pipeline = man.add_pipeline(ip="127.0.0.1", port=1234, topic="cool", frequency=15)
-
-    # attach a function/channel to the just created pipeline that will produce a
-    # sin-wave with an lower bound of -1 and upper bound of 3.
-    # The sine wave will have an 0.5 Hz frequency.
-    channel_1 = pipeline.add_channel(name="bar", scale=[-1, 3], frequency=0.5)
-    a = 1

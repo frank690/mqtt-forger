@@ -27,9 +27,9 @@ valid_generator_samples = [
 
 invalid_generator_samples = [
     ("Fail", 0.015, "wrong", 0, 0, None, None, 1337),
-    ("Fail", 0.15, "also_wrong", 2, 0.4, None, None, 1234),
-    ("Fail", 1.5, "very_wrong", 4, 0.2, None, None, 42),
-    ("Fail", 15, "wrongtastic", 8, 0.1, None, None, 2021),
+    ("Fail", 0.15, "also_wrong", 0, 0, None, None, 1234),
+    ("Fail", 1.5, "very_wrong", 0, 0, None, None, 42),
+    ("Fail", 15, "wrongtastic", 0, 0, None, None, 2021),
 ]
 
 generator_samples = valid_generator_samples + invalid_generator_samples

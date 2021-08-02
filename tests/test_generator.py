@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pytest
 
+from forger.auxiliary.enums import ChannelTypes
 from forger.auxiliary.exceptions import InvalidInputTypeError, SeedReplantError
 from forger.engine.generator import Generator
 from tests.conftest import generator_samples
@@ -150,9 +151,18 @@ class TestGenerator:
         """
         Test the get_data method
         """
-        if generator.channel_type == "wrong":
+        if not is_a_valid_channel_type(given_type=generator.channel_type):
             with pytest.raises(InvalidInputTypeError):
                 generator.get_data(current_datetime=dt)
         else:
             value = generator.get_data(current_datetime=dt)
             assert isinstance(value, float)
+
+
+def is_a_valid_channel_type(given_type: str) -> bool:
+    all_types = []
+    for channel_type in ChannelTypes:
+        all_types += channel_type.value
+    if given_type in all_types:
+        return True
+    return False
