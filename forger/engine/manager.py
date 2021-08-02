@@ -1,10 +1,7 @@
 """Main module to run the mqtt-forger."""
 
-# import own libs
-# import native libs
 from typing import List
 
-# import 3rd party libs
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from forger.auxiliary.constants import DEFAULT_PIPELINE_SETTINGS
@@ -20,16 +17,13 @@ class Manager:
     # set default values
     defaults = DEFAULT_PIPELINE_SETTINGS
 
-    def __init__(self, verbose=False):
+    def __init__(self):
         """
         Initialize variables
-
-        :param verbose: Boolean flag whether or not to print output.
         """
         self.pipelines = {}
         self.Scheduler = BackgroundScheduler()
         self.Scheduler.start()
-        self.verbose = verbose
 
     def add_pipeline(
         self, ip: str, port: int, topic: str, frequency: float, pipeline_name: str = ""
@@ -63,7 +57,7 @@ class Manager:
         Get names of all pipelines that have already been added.
         :return: List of names (strings) of pipelines.
         """
-        return [v["name"] for k, v in self.pipelines.items()]
+        return [v.name for k, v in self.pipelines.items()]
 
 
 if __name__ == "__main__":

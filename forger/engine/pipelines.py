@@ -30,20 +30,22 @@ class Pipeline:
         scheduler: apscheduler.schedulers.background.BackgroundScheduler,
         name: str = "",
     ):
-        """Adding a new entry in the pipeline dictionary.
+        """
+        Adding a new entry in the pipeline dictionary.
 
         :param pid: ID of pipeline.
-        :param ip: (mandatory, str) IP of host that will receive data.
+        :param ip: IP of host that will receive data.
         :param port: Port of host that will receive data.
-        :param topic: (mandatory, str) Topic to publish data onto.
+        :param topic: Topic to publish data onto.
         :param frequency: Frequency in that data will be published.
-        :param scheduler: (mandatory, BackgroundScheduler) Scheduler that times the data publishing.
+        :param scheduler: Scheduler that times the data publishing.
         :param name: Name of the new pipeline.
 
         Note:
         - name can also be None or an empty string.
         """
 
+        self.pid = pid
         self.channels = Channels()
         self.connection = Connection(ip=ip, port=port)
 
