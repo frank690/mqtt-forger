@@ -31,3 +31,6 @@ jobs:
                --cov-report term \
                --cov-report html:unit_test_reports/coverage \
                --cov=forger
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@1.1.3
+
