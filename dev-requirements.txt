@@ -8,3 +8,4 @@ docstr-coverage
 pylint
 flake8
 freezegun
+coveralls

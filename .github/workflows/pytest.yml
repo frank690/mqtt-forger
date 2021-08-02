@@ -31,7 +31,6 @@ jobs:
                --cov-report term \
                --cov-report html:unit_test_reports/coverage \
                --cov=forger
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@1.1.3
-      with:
-        github-token: ${{ secrets.github_token }}
+    - name: Coveralls
+      run: |
+        coverage run --source=forger -m pytest tests/
