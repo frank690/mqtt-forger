@@ -1,8 +1,24 @@
 # -*- coding: utf-8 -*-
+import re
+
 import setuptools
+
+with open("CHANGELOG.md", "r") as fh:
+    changelog = fh.read().splitlines()
+
+raw_changelog_versions = [
+    re.search(pattern=r"^##\s+(\d+\.\d+\.\d+)", string=c, flags=re.IGNORECASE)
+    for c in changelog
+]
+changelog_version = [rcv for rcv in raw_changelog_versions if rcv is not None][0].group(
+    1
+)
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
+with open("dev-requirements.txt", "r") as fh:
+    dev_requirements = fh.read().splitlines()
 
 with open("requirements.txt", "r") as fh:
     requirements = fh.read().splitlines()
@@ -26,22 +42,12 @@ setuptools.setup(
     install_requires=requirements,
     test_suite="tests",
     extras_require={
-        "dev": [
-            "pytest",
-            "pytest_cov",
-            "pytest-mock",
-            "docstr-coverage==1.1.0",
-            "pylint",
-            "flake8",
-            "freezegun",
-        ],
-        "docs": [
-            "sphinx",
-            "sphinx_rtd_theme",
-        ],
+        "dev": dev_requirements,
     },
     classifiers=[
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Operating System :: Microsoft :: Windows ",
         "Operating System :: Unix",
         "Operating System :: MacOS",

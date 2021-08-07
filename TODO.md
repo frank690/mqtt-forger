@@ -3,15 +3,16 @@
 ## not scheduled
 
 - [ ] Update Documentation even more!
-- [ ] Think about internal data flow and make changes if needed.
 
 ## version 0.2.x
 
 ### General
 
+- [x] Think about internal data flow and make changes if needed.
 - [ ] Update Documentation.
 - [x] Create an Visualizer class.
 - [ ] SSL, TLS connections to host.
+- [ ] Adapt unit tests after code base refactoring.
 
 ### Painter
 
@@ -19,6 +20,7 @@
 - [x] Catch closing plot.
 - [ ] Drawing must be faster than pipeline frequency.
     - (use latest n seconds instead of x samples?)
+- [ ] Make Painter work on all systems flawlessly.
 
 ## version 0.1.x
 

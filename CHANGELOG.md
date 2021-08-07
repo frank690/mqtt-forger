@@ -1,5 +1,11 @@
 # mqtt-forger - Changelog
 
+## 0.2.0 (2021-07-29)
+
+* Refactored code base after learning how to code properly. yikes.
+* Moving from travis to github unit testing.
+* Introduced isort and black codestyle.
+
 ## 0.1.16 (2020-09-01)
 
 * Renamed repo from NoveltyProducer -> mqtt-forger

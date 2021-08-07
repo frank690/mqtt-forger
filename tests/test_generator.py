@@ -1,239 +1,168 @@
-# import own libs
-from transmitter.engine import Generator
-from transmitter.auxiliary.exceptions import (
-    InvalidInputTypeError,
-    InvalidInputValueError,
-    SeedReplantError,
+"""This module is used to test the classes in forger.engine.generator"""
+
+from datetime import datetime
+
+import pytest
+
+from forger.auxiliary.enums import ChannelTypes
+from forger.auxiliary.exceptions import InvalidInputTypeError, SeedReplantError
+from forger.engine.generator import Generator
+from tests.conftest import generator_samples
+
+
+@pytest.fixture(
+    params=generator_samples,
 )
+def generator(request):
+    return Generator(
+        name=request.param[0],
+        frequency=request.param[1],
+        channel_type=request.param[2],
+        dead_frequency=request.param[3],
+        dead_period=request.param[4],
+        scale=request.param[5],
+        replay_data=request.param[6],
+        seed=request.param[7],
+    )
 
-# import 3rd party libs
-import numpy as np
-from unittest import TestCase
 
-# import native libs
-import datetime
+class TestGenerator:
+    @pytest.mark.parametrize(
+        "seed",
+        [
+            None,
+            42,
+            -1337,
+        ],
+    )
+    def test__plant_a_seed(self, generator, seed):
+        """
+        Test the _plant_a_seed method
+        """
+        if (generator.seed is None) and (seed is None):
+            with pytest.raises(SeedReplantError):
+                generator._plant_a_seed(seed=seed)
+        else:
+            generator._plant_a_seed(seed=seed)
 
-"""This module is executed by travis ci to test the transmitter.engine.generator"""
+    @pytest.mark.parametrize(
+        "value,scale,limits,expected",
+        [
+            (0, [5, 10], [-1, 1.5], 7),
+            (-1, [-42.5, 323.123], [-1, 1], -42.5),
+            (0.5, [-10, 100], [-1, 1], 72.5),
+            (-0.8, [-1000, -2000], [-1, 1], -1900),
+            (0, [5, 10], [10, -30], 8.75),
+            (-1, [-42.5, 323.123], [-1, 100], -42.5),
+            (0.5, [-10, 100], [-1, 0], 155),
+            (-0.8, [-1000, -2000], [0, 12.5], -2064),
+        ],
+    )
+    def test__rescale(self, generator, value, scale, limits, expected):
+        """
+        Test the _rescale method
+        """
+        generator.scale = scale
+        generator.limits = limits
+        assert generator._rescale(value=value) == expected
+
+    @pytest.mark.parametrize(
+        "dt",
+        [
+            datetime.now(),
+            None,
+        ],
+    )
+    def test__seconds_since_init(self, generator, dt):
+        """
+        Test the _seconds_since_init method
+        """
+        seconds = generator._seconds_since_init(current_datetime=dt)
+        assert isinstance(seconds, float)
+        assert seconds > 0
+
+    @pytest.mark.parametrize(
+        "dt",
+        [
+            datetime.now(),
+            datetime(
+                year=2020,
+                month=7,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2000,
+                month=7,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2021,
+                month=7,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            None,
+            datetime(
+                year=2020,
+                month=1,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2020,
+                month=2,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2020,
+                month=3,
+                day=10,
+                hour=12,
+                minute=10,
+                second=0,
+                microsecond=123,
+            ),
+            datetime(
+                year=2020, month=7, day=10, hour=1, minute=0, second=0, microsecond=0
+            ),
+            None,
+            None,
+        ],
+    )
+    def test_get_data(self, generator, dt):
+        """
+        Test the get_data method
+        """
+        if not is_a_valid_channel_type(given_type=generator.channel_type):
+            with pytest.raises(InvalidInputTypeError):
+                generator.get_data(current_datetime=dt)
+        else:
+            value = generator.get_data(current_datetime=dt)
+            assert isinstance(value, float)
 
 
-class TestBaseUnit(TestCase):
-    def test_type_output(self):
-        """Test types of output"""
-
-        # init class
-        generator = Generator(
-            name_="Foo",
-            limits_=[-15, 15],
-            frequency_=1,
-            type_="sin",
-            dead_frequency_=1,
-            dead_period_=0,
-            seed_=42,
-        )
-
-        # _seconds_since_init
-        seconds = generator._seconds_since_init()
-        self.assertIsInstance(seconds, float)
-
-        # _rescale
-        rescale_data_type = type(generator._rescale(0.5))
-        self.assertTrue(issubclass(rescale_data_type, (float, np.floating)))
-
-        # get_data
-        data_type = type(generator.get_data(datetime.datetime.now()))
-        self.assertTrue(issubclass(data_type, (float, np.floating)))
-
-    def test_value_output(self):
-        """Test delivered output of each function of generator class."""
-
-        # init class
-        generator = Generator(
-            name_="Foo",
-            limits_=[-15, 15],
-            frequency_=1,
-            type_="sin",
-            dead_frequency_=1,
-            dead_period_=0,
-            seed_=42,
-        )
-
-        # replant the seed
-        generator._plant_a_seed()
-
-        # _seconds_since_init
-        seconds = generator._seconds_since_init(generator.basetime)
-        self.assertTrue(seconds == 0)
-        seconds = generator._seconds_since_init()
-        self.assertTrue(seconds > 0)
-
-        # _rescale
-        min_rescaled = generator._rescale(-1)
-        self.assertTrue(min_rescaled == -15)
-        max_rescaled = generator._rescale(1)
-        self.assertTrue(max_rescaled == 15)
-
-        # get_data
-        self.assertTrue(generator.get_data(generator.basetime) == 0)
-        self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.25))
-            >= 14.99999999
-        )
-        self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5))
-            <= 0.0000001
-        )
-        self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.5))
-            >= -0.0000001
-        )
-        self.assertTrue(
-            generator.get_data(generator.basetime + datetime.timedelta(seconds=0.75))
-            <= -14.99999999
-        )
-
-        # init another class
-        generator = Generator(
-            name_="Foo",
-            limits_=[-15, 15],
-            frequency_=1,
-            type_="fixed",
-            dead_frequency_=1,
-            dead_period_=0,
-            seed_=42,
-        )
-        generator._plant_a_seed(123)
-        self.assertTrue(generator.get_data(generator.basetime) >= 14.99999999)
-
-    def test_invalid_inputs(self):
-        """Test for all expected errors that should be raised when given invalid inputs"""
-        # channel_name_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_=1337,
-                limits_=[-15, 15],
-                frequency_=1,
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-
-        # channel_limits_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_="InvalidLimits",
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-        with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=["InvalidLimit", 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-
-        # channel_frequency_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_="InvalidChannelFrequency",
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-        with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=0,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-
-        # type_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_=1,
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-        with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="fail",
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-
-        # dead_frequency_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_="InvalidDeadFrequency",
-                dead_period_=2,
-            )
-        with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0,
-                dead_period_=2,
-            )
-
-        # dead_period_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_="InvalidDeadPeriod",
-            )
-        with self.assertRaises(InvalidInputValueError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=-2,
-            )
-
-        # seed_
-        with self.assertRaises(InvalidInputTypeError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=2,
-                seed_="InvalidSeed",
-            )
-        with self.assertRaises(SeedReplantError):
-            invalid_generator = Generator(
-                name_="ThisWillFail",
-                limits_=[-15, 15],
-                frequency_=1,
-                type_="sin",
-                dead_frequency_=0.1,
-                dead_period_=2,
-            )
-            invalid_generator._plant_a_seed()
+def is_a_valid_channel_type(given_type: str) -> bool:
+    all_types = []
+    for channel_type in ChannelTypes:
+        all_types += channel_type.value
+    if given_type in all_types:
+        return True
+    return False
