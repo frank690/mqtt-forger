@@ -12,15 +12,15 @@
 - [ ] Update Documentation.
 - [x] Create an Visualizer class.
 - [ ] SSL, TLS connections to host.
-- [ ] Adapt unit tests after code base refactoring.
+- [x] Adapt unit tests after code base refactoring.
 
-### Painter
+### Plotter
 
 - [x] Create/Delete Subplots dynamically.
 - [x] Catch closing plot.
 - [ ] Drawing must be faster than pipeline frequency.
-    - (use latest n seconds instead of x samples?)
 - [ ] Make Painter work on all systems flawlessly.
+- [ ] Add unit tests for plotter
 
 ## version 0.1.x
 
