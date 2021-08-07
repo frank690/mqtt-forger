@@ -84,7 +84,7 @@ class Generator:
                 )
                 yr = np.sin(x)
             elif self.channel_type in ChannelTypes.RANDOM.value:
-                yr = np.random.rand()
+                yr = 2 * np.random.rand() - 1
             elif self.channel_type in ChannelTypes.FIXED.value:
                 yr = 1.0
             elif self.channel_type in ChannelTypes.REPLAY.value:

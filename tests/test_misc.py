@@ -2,7 +2,7 @@
 
 import pytest
 
-from forger.auxiliary.misc import count_up, get_new_id, get_unique_name
+from forger.auxiliary.misc import count_up, datestr2num, get_new_id, get_unique_name
 
 
 @pytest.mark.parametrize(
@@ -51,3 +51,17 @@ def test_get_new_id(dictionary, expected):
     Test the get_new_id function
     """
     assert expected == get_new_id(dictionary=dictionary)
+
+
+@pytest.mark.parametrize(
+    "date_string,expected",
+    [
+        ("2021-08-07T00:00:00.000000", 18846),
+        ("2021-08-07T21:04:42.674929", 18846.878271700567),
+    ],
+)
+def test_datestr2num(date_string, expected):
+    """
+    Test the datestr2num function
+    """
+    assert expected == datestr2num(date_string=date_string)

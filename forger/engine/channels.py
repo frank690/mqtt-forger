@@ -113,12 +113,13 @@ class Channels:
             if self.channels[cid] is channel_to_remove:
                 self.channels.pop(cid)
 
-    def _get_overall_output(self, name: str, time: Optional[datetime] = None):
+    def _get_overall_output(self, name: str, time: Optional[datetime] = None) -> float:
         """
         Get the combined output of all generators.
 
         :param name: Name of channel that the data should be extracted from.
         :param time: Timestamp that the data should be extracted from.
+        :return: Sum of all values of each channel on this pipeline.
         """
         if not time:
             time = datetime.now()
@@ -140,15 +141,13 @@ class Channels:
     def get_payload(self) -> str:
         """
         Gather the data of all generators and pack it into a nice json.
-        :return: current payload.
+        :return: current payload as dictionary
         """
-        # get current time.
         time = datetime.now()
-        # create payload template
         data = {"timestamp": time.isoformat()}
-        # get all channels
         channels = self._get_unique_channels()
-        # loop over each unique channel and gather data.
+
         for channel in channels:
             data[channel] = self._get_overall_output(channel, time)
+
         return json.dumps(data)

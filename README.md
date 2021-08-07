@@ -39,11 +39,8 @@ foo b'{"timestamp": "2019-08-28T09:39:00.816615", "bar": -0.5475520657645743}'
 #### How to visualize the data flow.
 
 ~~~py
-# import class
-from forger.engine import Painter
-
-# init painter instance and listen to specific host ip, port and mqtt topic.
-Painter('test.mosquitto.org', 1883, 'foo')
+# visualize all channels on this pipeline
+pipeline.draw()
 ~~~
 
 ![Single Channel](img/example_1.png)

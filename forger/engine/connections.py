@@ -2,9 +2,10 @@
 
 __all__ = [
     "Connection",
+    "Listener",
 ]
 
-from typing import Tuple
+from typing import Callable, Tuple
 
 import paho.mqtt.client as mqtt
 
@@ -49,3 +50,47 @@ class Connection:
         :return: ip and port as tuple.
         """
         return self.ip, self.port
+
+
+class Listener:  # pragma: no cover
+    """
+    Class to listen for new data on mqtt connection.
+    """
+
+    def __init__(self, ip: str, port: int, topic: str, on_message: Callable):
+        """
+        Initialize new connection.
+
+        :param ip: IP of target host.
+        :param port: Port of target host.
+        :param topic: Topic to listen and wait for data.
+        :param on_message: Function to define what will happen when data is received.
+        """
+        self.ip = ip
+        self.port = port
+        self.topic = topic
+
+        self.connection = Connection(ip=ip, port=port)
+        self.connection.mqtt_client.on_connect = self._on_connect
+        self.connection.mqtt_client.on_message = on_message
+        self.connect()
+
+    def connect(self):
+        """
+        Establish connection to mqtt broker
+        """
+        self.connection.mqtt_client.connect(self.ip, self.port, 60)
+        self.connection.mqtt_client.loop_start()
+
+    def _on_connect(self, client, userdata, flags, rc):
+        """
+        Define what to do when connection was established.
+        """
+        self.connection.mqtt_client.subscribe(self.topic)
+
+    def disconnect(self):
+        """
+        Terminate connection to mqtt broker
+        """
+        self.connection.mqtt_client.loop_stop()
+        self.connection.mqtt_client.disconnect()

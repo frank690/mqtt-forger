@@ -6,10 +6,16 @@ __all__ = [
     "get_unique_name",
     "count_up",
     "get_new_id",
+    "datestr2num",
 ]
 
+from datetime import datetime
 from re import search as research
 from typing import List
+
+import matplotlib.dates as mdates
+
+from forger.auxiliary.constants import DATE_FORMAT
 
 
 def get_unique_name(names: List[str], name: str) -> str:
@@ -54,3 +60,12 @@ def get_new_id(dictionary: dict) -> int:
     :return: New key that can be used without the hazard of overwriting an existing key.
     """
     return 0 if len(dictionary.keys()) == 0 else max(dictionary.keys()) + 1
+
+
+def datestr2num(date_string: str) -> int:
+    """
+    Convert given datestring to numeric value.
+    :param date_string: String in date format
+    :return Date as numeric value
+    """
+    return mdates.date2num(datetime.strptime(date_string, DATE_FORMAT))

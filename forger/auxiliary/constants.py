@@ -10,8 +10,6 @@ DEFAULT_PIPELINE_SETTINGS = {
     "seed": None,
 }
 
-# used by forger.engine.painter
-MAX_DELAY = 1 / (24 * 60 * 60)  # 1 second
-MEMORY = 5 / (24 * 60 * 60)  # 5 seconds
+MEMORY = 50
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%f"
 DISPLAY_DATE_FORMAT = "%M:%S"
