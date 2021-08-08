@@ -42,7 +42,7 @@ class Plotter:
         self._create_figure()
         self._run()
 
-    def _run(self):
+    def _run(self):  # pragma: no cover
         """
         Define main running loop.
         """
@@ -50,11 +50,18 @@ class Plotter:
             plt.pause(0.0001)
 
             if len(self.buffer) > 0:
-                self.update(payload=self.buffer[0])
-                self.buffer = self.buffer[1:]
-                print(f"# payloads in buffer: {len(self.buffer)}")
+                self._process_payload()
             else:
                 time.sleep(0.1)
+
+    def _process_payload(self):
+        """
+        Take a payload from the buffer and pass it to the update method.
+        Remove said payload from buffer afterwards.
+        """
+        self.update(payload=self.buffer[0])
+        self.buffer = self.buffer[1:]
+        print(f"# payloads in buffer: {len(self.buffer)}")
 
     def _stop(self):
         """
@@ -63,7 +70,7 @@ class Plotter:
         self.running = False
         self.listener.disconnect()
 
-    def _create_figure(self):
+    def _create_figure(self):  # pragma: no cover
         """
         Makes sure that the figure exists and is visible.
         Create new figure if necessary.
@@ -152,7 +159,7 @@ class Plotter:
         """
         return np.insert(data[1:], data.size - 1, new_value)
 
-    def _update_canvas(self):
+    def _update_canvas(self):  # pragma: no cover
         """
         After plots were updated, the scaling or limits might be off.
         Take care of that.
