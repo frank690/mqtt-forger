@@ -18,7 +18,7 @@
 
 - [x] Create/Delete Subplots dynamically.
 - [x] Catch closing plot.
-- [ ] Drawing must be faster than pipeline frequency.
+- [ ] Drawing must be faster than pipeline frequency. Probably use pyqtgraph?
 - [ ] Make Painter work on all systems flawlessly.
 - [ ] Add unit tests for plotter
 
