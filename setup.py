@@ -27,7 +27,7 @@ requirements = [req for req in requirements if not req.lower().startswith("pytes
 
 setuptools.setup(
     name="mqtt-forger",
-    version="0.1.16",
+    version=changelog_version,
     author="frank690",
     author_email="admin@sffresch.de",
     description="Dynamic mqtt message broker with lots of fakery and witchcraft!",
